@@ -6,10 +6,10 @@
 function Is-DirectoryInPath($directory)
 {
     if ( $env:Path.Contains("${directory.Parent.FullName}$directory\\") -match $true )
-	{
-		return $true
-	}
-	return $false
+    {
+        return $true
+    }
+    return $false
 }
 
 #endregion
@@ -17,8 +17,7 @@ function Is-DirectoryInPath($directory)
 #region Copy-Functions
 
 # Copies the whole structure of a directory, even the files, but empty
-function Copy-FolderStructure_WithEmptyFiles($Path, $Destination)
-{
+function Copy-FolderStructure_WithEmptyFiles($Path, $Destination) {
     $Path_name = (Get-Item $Path).Name
     Get-ChildItem $Path -Directory -Recurse -Name | ForEach-Object { New-Item $Destination\$Path_name\$_ -Type Directory }
     Get-ChildItem $Path -File      -Recurse -Name | ForEach-Object { New-Item $Destination\$Path_name\$_ }
@@ -50,12 +49,12 @@ function Get-FilesFromUri($Uri)
         $item = $webResponse.Links.Item($_)
         $inner = $item.innerHTML
 
-        if ($inner -eq $item.href)
-        {
+        if ($inner -eq $item.href) {
             $elements.Add("$Uri$inner")
         }
     }
-	return $elements
+    
+    return $elements
 }
 
 # Given a file full with file paths returns an object that groups those file by their extension
@@ -76,17 +75,18 @@ function Get-FilesObject_GroupByExtension($Path)
     $Files = [ordered] @{} # Contains the extensions of the files and each one contains the proper files path
 
     $filePaths | ForEach-Object {
-        # $_ = "things\txtFiles\this is-my_text.file.txt" (This is for visual help. It's an example of the worst file name case) 
 
-        $itemArr      = $_.Split("\") # ["things", "txtFiles", "this is-my_text.file.txt"]
+        # $_ = "things\txtFiles\this is-my_text.file.txt" (This is for visual help. It's an example of the worst filename case) 
+
+        $itemArr = $_.Split("\") # ["things", "txtFiles", "this is-my_text.file.txt"]
         $itemFullName = $itemArr[-1]  # "this is-my_text.file.txt"
 
         # This is in case you want to put just a list of strings in a file and just get an object with atributes and values without any kind of group
         if ($itemFullName.Contains("."))
         {
             $itemFullNameArr = $itemArr[-1].Split(".") # ["this is-my_text", "file, txt"]
-            $item_ext        = $itemFullNameArr[-1] # "txt"
-            $item_name       = $itemFullName.Replace(".$item_ext", "")  # this is-my_text.file
+            $item_ext = $itemFullNameArr[-1] # "txt"
+            $item_name = $itemFullName.Replace(".$item_ext", "")  # this is-my_text.file
 
             # If the name starts with a number it adds a '_' to the beginning
             if ($item_name -match "^[0-9]") { $item_name = $item_name.Insert(0, "_") }
@@ -106,11 +106,9 @@ function Get-FilesObject_GroupByExtension($Path)
         {
             $Files.$item_name = $_ # $Files.textFile = "things\txtFiles\this is-my_text.file.txt"
         }
-        else
-        {
+        else {
             # If the extension doesn't exist in the object then we create it
-            if (-Not $Files.Contains($item_ext))
-            {
+            if (-Not $Files.Contains($item_ext)) {
                 $Files.$item_ext = @{}
             }
             # Adds the file name in the corresponding extension with its value
@@ -120,84 +118,80 @@ function Get-FilesObject_GroupByExtension($Path)
     return $Files
 }
 # Gets an object return by the Get-Files-GroupBy-Extension-From-File function and return an string with the structure in a class c#/Java form
-function Get-FilesObject_InClassStructureForm($Path, $strConst = "const", $Type = "String", [LanguageType] $LanguageType = [LanguageType]::CSharp)
-{
-	$Files = Get-FilesObject_GroupByExtension $Path
+function Get-FilesObject_InClassStructureForm(
+    $Path, $strConst = "const", $Type = "String",
+    [LanguageType] $LanguageType = [LanguageType]::CSharp
+) {
+    $Files = Get-FilesObject_GroupByExtension $Path
 
-    $classTab  = "   "
-    $attrTab   = "       "
+    $classTab = "   "
+    $attrTab = "       "
     $strStatic = " static"
 
-    switch ($LanguageType)
-    {
+    switch ($LanguageType) {
         CSharp { $strStatic = "" }
         Java { $strConst = "final" }
     }
 
-    $strFiles  = "class MyFiles`n"
+    $strFiles = "class MyFiles`n"
     $strFiles += "{`n"
 
     $strBody = ""
-    if ($Files.hasExtension) # If it has extension we have to group the files by their extension
-    { 
+    if ($Files.hasExtension) { # If it has extension we have to group the files by their extension 
         $files.Remove("hasExtension") # Removes the hasExtension property because we don't want to add it to MyFiles class
 
-        foreach ($ext in $Files.GetEnumerator())
-        {
+        foreach ($ext in $Files.GetEnumerator()) {
             $strBody += "$classTab public class $($ext.Name)`n"
             $strBody += "$classTab {`n"
 
-            foreach($filePath in $ext.Value.GetEnumerator())
-            {
-                                    # public static    const     String field            =   "value";
+            foreach ($filePath in $ext.Value.GetEnumerator()) {
+                # public static    const     String field            =   "value";
                 $strBody += "$attrTab public$strStatic $strConst $Type $($filePath.Name) = `"$($filePath.Value.Replace("\", "\\"))`";`n"
             }
-            $strBody  = $strBody.Substring(0, $strBody.Length - 1) # Deletes the final escape character
+            $strBody = $strBody.Substring(0, $strBody.Length - 1) # Deletes the final escape character
             $strBody += "`n"
             $strBody += "$classTab }`n"
         }
     }
-    else # If there's no extension then we don't have to group anything
-    {
+    else { # If there's no extension then we don't have to group anything
         $files.Remove("hasExtension") # Removes the hasExtension property because we don't want to add it to MyFiles class
         $attrTab = $classTab          # Changes the tab length because if there are no group classes the attributes has a smaller tab length
 
-        foreach($filePath in $Files.GetEnumerator())
-        {
-                                # public static     const    String   field          =     "value";
+        foreach ($filePath in $Files.GetEnumerator()) {
+            # public static     const    String   field          =     "value";
             $strBody += "$attrTab public$strStatic $strConst $Type $($filePath.Name) = `"$($filePath.Value.Replace("\", "\\"))`";`n"
         }
     }
-    $strBody   = $strBody.Substring(0, $strBody.Length - 1) # Deletes the final escape character
+    $strBody = $strBody.Substring(0, $strBody.Length - 1) # Deletes the final escape character
     $strFiles += "$strBody`n"
     $strFiles += "}"
 
-	return $strFiles
+    return $strFiles
 }
 
 # Downloads all the files and folders from a url
 function Invoke-FilesFromUri($Uri, $Destination = ".\")
 {
-	$elements = Get-FilesFromUri -Uri $Uri
+    $elements = Get-FilesFromUri -Uri $Uri
 
-	$elements | ForEach-Object {
+    $elements | ForEach-Object {
 
-		$element_arr = $_.Split("/")
+        $element_arr = $_.Split("/")
 
-		if (-Not $_.EndsWith("/"))
-		{
-			$element_name = $element_arr[$element_arr.Length - 1]
+        if (-Not $_.EndsWith("/"))
+        {
+            $element_name = $element_arr[$element_arr.Length - 1]
 
-			Invoke-WebRequest -Uri $_ -OutFile $Destination\$element_name
-		}
-		else 
-		{
-			$element_name = $element_arr[$element_arr.Length - 2]
+            Invoke-WebRequest -Uri $_ -OutFile $Destination\$element_name
+        }
+        else
+        {
+            $element_name = $element_arr[$element_arr.Length - 2]
 
-			New-Item -Path "$Destination\$element_name\" -ItemType Directory
-			Invoke-FilesFromUri "$Uri/$element_name/" "$Destination\$element_name\"
-		}
-	}
+            New-Item -Path "$Destination\$element_name\" -ItemType Directory
+            Invoke-FilesFromUri "$Uri/$element_name/" "$Destination\$element_name\"
+        }
+    }
 }
 
 # Downloads all the files and folders from a url inside the folder they are contained
