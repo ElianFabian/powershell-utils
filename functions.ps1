@@ -5,7 +5,7 @@
 # Checks if a directory if in the Path variable
 function Is-DirectoryInPath($directory)
 {
-	if ( $env:Path.Contains("${directory.Parent.FullName}$directory\\") -match $true )
+if ( $env:Path.Contains("${directory.Parent.FullName}$directory\\") -match $true )
 	{
 		return $true
 	}
