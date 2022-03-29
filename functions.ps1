@@ -230,21 +230,22 @@ function Invoke-FilesFromUri_WithRootFolder($Uri, $Destination = ".\")
 
 <# function Rename-ItemAndPath($directory, $newName)
 {
-	if ( Is-DirectoryInPath($directory) )
-	{
-		Rename-Item $directory $newName
+    if ( Is-DirectoryInPath($directory) )
+    {
+	Rename-Item $directory $newName
 
-		[System.Environment]::SetEnvironmentVariable
-		(
-			'Path',
-			$env:Path.Replace(
-				$directory.Parent.FullName + $directory,
-				$directory.Parent.FullName + $newName
-			)
-		)
-		return $true
-	}
-	return $false
+	[System.Environment]::SetEnvironmentVariable
+	(
+	    Path',
+	    $env:Path.Replace(
+	        $directory.Parent.FullName + $directory,
+	        $directory.Parent.FullName + $newName
+            )
+	)
+	
+	return $true
+    }
+    return $false
 } #>
 
 #endregion
