@@ -61,7 +61,7 @@ function Get-FilesFromUri($Uri)
 # Given a file full with file paths returns an object that groups those file by their extension
 # If the Path is not specify then it gets the paths from the clipboard
 # You can also use this function for a list of strings, it doesn't have to be a list of paths
-function Get-FilesObject_GroupByExtension($Path)
+function Get-FilesObject_GroupBy-Extension($Path)
 {
     $filePaths = ""
     if ($Path -eq $null)
@@ -120,67 +120,75 @@ function Get-FilesObject_GroupByExtension($Path)
     return $Files
 }
 # Gets an object return by the Get-Files-GroupBy-Extension-From-File function and return an string with the structure in a class c#/Java form
-function Get-FilesObject_InClassStructureForm($Path, $strConst = "const", $Type = "String", [LanguageType] $LanguageType = [LanguageType]::CSharp)
+function Get-FilesObject_InClassStructureForm($Path, $Type = "String", [LanguageType] $LanguageType = [LanguageType]::CSharp)
 {
-	$Files = Get-FilesObject_GroupByExtension $Path
+    $Files = Get-FilesObject_GroupBy-Extension $Path
 
     $classTab    = "   "
-    $attrTab     = "       "
-    $strStatic   = " static"
-    $strName     = "MyFiles"
-    $strDataType = "class"
-    $strPublic   = "public "
+    $attrTab     = "$classTab    "
 
-    switch ($LanguageType)
+    function Get-Body($items)
     {
-        CSharp { $strStatic = "" }
-        Java { $strConst = "final" }
-        Kotlin
+        $body = ""
+
+        foreach($filePath in $items.Value.GetEnumerator())
         {
-            $strPublic   = ""
-            $strStatic   = ""
-            $strConst    = "const val"
-            $strDataType = "object"
-            $Type        = ""
+            $body += switch ($LanguageType)
+            {
+                CSharp { "$attrTab public const $Type $($filePath.Key) = `"$($filePath.Value.Replace("\", "\\"))`";`n" }
+                Java   { "$attrTab public static final $Type $($filePath.Key) = `"$($filePath.Value.Replace("\", "\\"))`";`n" }
+                Kotlin { "$attrTab const val $($filePath.Name) = `"$($filePath.Value.Replace("\", "\\"))`"`n" }
+            }
         }
+
+        return $body
     }
 
-    $strFiles  = "$strDataType $strName`n"
-    $strFiles += "{`n"
+    $dataType = switch ($LanguageType)
+    {
+        CSharp { "class" }
+        Java   { "class" }
+        Kotlin { "object" }
+    }
+    $strFiles += $dataType
+    $strFiles += " MyFiles"
+    $strFiles += "`n{`n"
 
-    $strBody = ""
+    $body = ""
+
     if ($Files.hasExtension) # If it has extension we have to group the files by their extension
     { 
-        $files.Remove("hasExtension") # Removes the hasExtension property because we don't want to add it to MyFiles class
+        $Files.Remove("hasExtension") # Removes the hasExtension property because we don't want to add it to MyFiles class
 
         foreach ($ext in $Files.GetEnumerator())
         {
-            $strBody += "$classTab $strPublic$strDataType $($ext.Name)`n"
-            $strBody += "$classTab {`n"
-
-            foreach($filePath in $ext.Value.GetEnumerator())
+            $body += switch ($LanguageType)
             {
-                                    # public static    const     String field            =   "value";
-                $strBody += "$attrTab $strPublic$strConst $Type$($filePath.Name) = `"$($filePath.Value.Replace("\", "\\"))`";`n"
+                CSharp { "$classTab public $dataType $($ext.Name)" }
+                Java { "$classTab public $dataType $($ext.Name)" }
+                Kotlin { "$classTab $dataType $($ext.Name)" }
             }
-            $strBody  = $strBody.Substring(0, $strBody.Length - 1) # Deletes the final escape character
-            $strBody += "`n"
-            $strBody += "$classTab }`n"
+
+            $body += "`n"
+            $body += "$classTab {`n"
+
+            $body += Get-Body $ext
+
+            $body  = $body.Substring(0, $body.Length - 1) # Deletes the final escape character
+            $body += "`n"
+            $body += "$classTab }`n"
         }
     }
-    else # If there's no extension then we don't have to group anything
+    else # If there's no extension then we don't have to group the files
     {
-        $files.Remove("hasExtension") # Removes the hasExtension property because we don't want to add it to MyFiles class
+        $Files.Remove("hasExtension") # Removes the hasExtension property because we don't want to add it to MyFiles class
         $attrTab = $classTab          # Changes the tab length because if there are no group classes the attributes has a smaller tab length
 
-        foreach($filePath in $Files.GetEnumerator())
-        {
-                                # public static     const    String   field          =     "value";
-            $strBody += "$attrTab public$strStatic $strConst $Type $($filePath.Name) = `"$($filePath.Value.Replace("\", "\\"))`";`n"
-        }
+        $body = Get-Body $Files
     }
-    $strBody   = $strBody.Substring(0, $strBody.Length - 1) # Deletes the final escape character
-    $strFiles += "$strBody`n"
+
+    $body      = $body.Substring(0, $body.Length - 1) # Deletes the final escape character
+    $strFiles += "$body`n"
     $strFiles += "}"
 
 	return $strFiles
