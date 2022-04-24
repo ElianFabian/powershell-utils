@@ -120,12 +120,11 @@ function Get-FilesObject_GroupBy-Extension($Path)
     return $Files
 }
 # Gets an object return by the Get-Files-GroupBy-Extension-From-File function and return an string with the structure in a class c#/Java form
-function Get-FilesObject_InClassStructureForm($Path, $Type = "String", [LanguageType] $LanguageType = [LanguageType]::CSharp)
+function Get-FilesObject_InClassStructureForm($Path, $Type = "String", [LanguageType] $LanguageType = [LanguageType]::CSharp, $TabSize = 4)
 {
     $Files = Get-FilesObject_GroupBy-Extension $Path
 
-    $classTab    = "   "
-    $attrTab     = "$classTab    "
+    $tab = "".PadLeft($TabSize)
 
     function Get-Body($items)
     {
@@ -133,11 +132,14 @@ function Get-FilesObject_InClassStructureForm($Path, $Type = "String", [Language
 
         foreach($filePath in $items.Value.GetEnumerator())
         {
+            $field_value = "$($filePath.Key) = `"$($filePath.Value.Replace("\", "\\"))`""
+            
+            $body += "$tab$tab"
             $body += switch ($LanguageType)
             {
-                CSharp { "$attrTab public const $Type $($filePath.Key) = `"$($filePath.Value.Replace("\", "\\"))`";`n" }
-                Java   { "$attrTab public static final $Type $($filePath.Key) = `"$($filePath.Value.Replace("\", "\\"))`";`n" }
-                Kotlin { "$attrTab const val $($filePath.Name) = `"$($filePath.Value.Replace("\", "\\"))`"`n" }
+                CSharp { "public const $Type $field_value;`n" }
+                Java   { "public static final $Type $field_value;`n" }
+                Kotlin { "const val $field_value`n" }
             }
         }
 
@@ -162,27 +164,29 @@ function Get-FilesObject_InClassStructureForm($Path, $Type = "String", [Language
 
         foreach ($ext in $Files.GetEnumerator())
         {
+            $dataType_extName = "$dataType $($ext.Name)" # public class txt
+
+            $body += $tab
             $body += switch ($LanguageType)
             {
-                CSharp { "$classTab public $dataType $($ext.Name)" }
-                Java { "$classTab public $dataType $($ext.Name)" }
-                Kotlin { "$classTab $dataType $($ext.Name)" }
+                CSharp { "public $dataType_extName" }
+                Java { "public $dataType_extName" }
+                Kotlin { "$dataType_extName" }
             }
 
             $body += "`n"
-            $body += "$classTab {`n"
+            $body += "$tab{`n"
 
             $body += Get-Body $ext
 
             $body  = $body.Substring(0, $body.Length - 1) # Deletes the final escape character
             $body += "`n"
-            $body += "$classTab }`n"
+            $body += "$tab}`n"
         }
     }
-    else # If there's no extension then we don't have to group the files
+    else # If not we only have fields inside a class
     {
         $Files.Remove("hasExtension") # Removes the hasExtension property because we don't want to add it to MyFiles class
-        $attrTab = $classTab          # Changes the tab length because if there are no group classes the attributes has a smaller tab length
 
         $body = Get-Body $Files
     }
