@@ -146,14 +146,14 @@ function Get-FilesObject_InClassStructureForm($Path, $Type = "String", [Language
         return $body
     }
 
-    $dataType = switch ($LanguageType)
+    $container = switch ($LanguageType)
     {
         CSharp { "class" }
         Java   { "class" }
         Kotlin { "object" }
     }
 
-    $strFiles += "$dataType MyFiles"
+    $strFiles += "$container MyFiles"
     $strFiles += "`n{`n"
 
     $body = ""
@@ -164,14 +164,14 @@ function Get-FilesObject_InClassStructureForm($Path, $Type = "String", [Language
 
         foreach ($ext in $Files.GetEnumerator())
         {
-            $dataType_extName = "$dataType $($ext.Name)" # public class txt
+            $container_extName = "$container $($ext.Name)" # class txt
 
             $body += $tab
             $body += switch ($LanguageType)
             {
-                CSharp { "public $dataType_extName" }
-                Java { "public $dataType_extName" }
-                Kotlin { "$dataType_extName" }
+                CSharp { "public $container_extName" }
+                Java { "public $container_extName" }
+                Kotlin { "$container_extName" }
             }
 
             $body += "`n"
