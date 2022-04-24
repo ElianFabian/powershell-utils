@@ -124,7 +124,7 @@ function Get-FilesObject_InClassStructureForm($Path, $Type = "String", [Language
 {
     $Files = Get-FilesObject_GroupBy-Extension $Path
 
-    $tab = "".PadLeft($TabSize)
+    $tab = " " * $TabSize
 
     function Get-Body($items)
     {
