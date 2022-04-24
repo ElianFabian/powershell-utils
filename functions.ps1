@@ -150,8 +150,7 @@ function Get-FilesObject_InClassStructureForm($Path, $Type = "String", [Language
         Java   { "class" }
         Kotlin { "object" }
     }
-    $strFiles += $dataType
-    $strFiles += " MyFiles"
+    $strFiles += "$dataType MyFiles"
     $strFiles += "`n{`n"
 
     $body = ""
