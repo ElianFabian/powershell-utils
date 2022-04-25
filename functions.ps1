@@ -129,22 +129,25 @@ function Get-FilesObject_InClassStructureForm($Path, $Type = "String", [Language
 
     function Get-Body($items)
     {
-        $body = ""
+        $SEMICOLON = ";"
+        $body      = ""
 
         foreach($filePath in $items.Value.GetEnumerator())
         {
-            $semicolon = ";"
-            $field_value = "$($filePath.Key) = `"$($filePath.Value.Replace("\", "\\"))`""
-            
+
+            $field = $($filePath.Key)
+            $value = "`"$($filePath.Value.Replace("\", "\\"))`""
+            $field_value = "$field = $value"
+
             $body += "$tab$tab"
             $body += switch ($LanguageType)
             {
                 CSharp { "public const $Type" }
                 Java   { "public static final $Type" }
-                Kotlin { "const val"; $semicolon = "" }
+                Kotlin { "const val"; $SEMICOLON = "" }
             }
             $body += " "
-            $body += "$field_value$semicolon`n"
+            $body += "$field_value$SEMICOLON`n"
         }
 
         return $body
