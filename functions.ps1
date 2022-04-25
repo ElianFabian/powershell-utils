@@ -59,15 +59,25 @@ function Get-FilesFromUri($Uri)
 }
 
 # Given a file full with file paths returns an object that groups those file by their extension
-# If the Path is not specify then it gets the paths from the clipboard
-# You can also use this function for a list of strings, it doesn't have to be a list of paths
+# If $Path is not specify then it gets the paths from the clipboard
+# If $Path is a folder then it will get the paths of the files from that folder
+# If $Path is a file then it will get the paths from its content
 function Get-FilesObject_GroupBy-Extension($Path)
 {
     $filePaths = ""
+    $fileObject = ""
+
+    if ($Path -ne $null) { $fileObject = Get-Item $Path }
+
+    $isFolder = $fileObject.PSIsContainer
 
     if ($Path -eq $null)
     {
         $filePaths = Get-Clipboard
+    }
+    elseif ($isFolder)
+    {
+        $filePaths = (Get-ChildItem $Path -File).FullName
     }
     else
     {
