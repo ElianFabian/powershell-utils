@@ -83,10 +83,9 @@ function Get-FilesObject_GroupBy-Extension($Path)
 {
     $filePaths  = ""
     $fileObject = ""
+    $isFolder   = ""
 
-    if ($Path -ne $null) { $fileObject = Get-Item $Path }
-
-    $isFolder = $fileObject.PSIsContainer
+    if ($Path -ne $null) { $isFolder = (Get-Item $Path).PSIsContainer }
 
     if ($Path -eq $null)
     {
@@ -179,8 +178,8 @@ function Get-FilesObject_InClassStructureForm($Path, $Type = "String", [Language
 
         foreach($filePath in $items.Value.GetEnumerator())
         {
-            $field = $($filePath.Key)
-            $value = `"$($filePath.Value.Replace("\", "\\"))`"
+            $field =    $($filePath.Key)
+            $value = "`"$($filePath.Value.Replace("\", "\\"))`""
             $field_value = "$field = $value"
 
             $body += "$tab$tab"
@@ -281,7 +280,6 @@ function Invoke-FilesFromUri($Uri, $Destination = ".\")
 		}
 	}
 }
-
 
 <#
     .DESCRIPTION
