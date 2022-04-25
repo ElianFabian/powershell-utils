@@ -64,7 +64,7 @@ function Get-FilesFromUri($Uri)
 # If $Path is a file then it will get the paths from its content
 function Get-FilesObject_GroupBy-Extension($Path)
 {
-    $filePaths = ""
+    $filePaths  = ""
     $fileObject = ""
 
     if ($Path -ne $null) { $fileObject = Get-Item $Path }
