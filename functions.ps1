@@ -64,6 +64,7 @@ function Get-FilesFromUri($Uri)
 function Get-FilesObject_GroupBy-Extension($Path)
 {
     $filePaths = ""
+
     if ($Path -eq $null)
     {
         $filePaths = Get-Clipboard
@@ -132,15 +133,18 @@ function Get-FilesObject_InClassStructureForm($Path, $Type = "String", [Language
 
         foreach($filePath in $items.Value.GetEnumerator())
         {
+            $semicolon = ";"
             $field_value = "$($filePath.Key) = `"$($filePath.Value.Replace("\", "\\"))`""
             
             $body += "$tab$tab"
             $body += switch ($LanguageType)
             {
-                CSharp { "public const $Type $field_value;`n" }
-                Java   { "public static final $Type $field_value;`n" }
-                Kotlin { "const val $field_value`n" }
+                CSharp { "public const $Type" }
+                Java   { "public static final $Type" }
+                Kotlin { "const val"; $semicolon = "" }
             }
+            $body += " "
+            $body += "$field_value$semicolon`n"
         }
 
         return $body
