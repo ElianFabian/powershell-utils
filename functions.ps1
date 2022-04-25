@@ -2,21 +2,7 @@
 
 #region Is-Functions
 
-<#
-    .DESCRIPTION
-    # Checks if a directory if in the Path variable.
 
-    .PARAMETER Path
-    # The directory to check.
-#>
-function Is-DirectoryInPath($Path)
-{
-	if ( $env:Path.Contains("${Path.Parent.FullName}$Path\\") -match $true )
-	{
-		return $true
-	}
-	return $false
-}
 
 #endregion
 
@@ -359,6 +345,22 @@ function Set-Properties(
 		return $inputObject
     }
 }
+
+# <#
+#     .DESCRIPTION
+#     # Checks if a directory if in the Path variable.
+
+#     .PARAMETER Path
+#     # The directory to check.
+# #>
+# function Is-DirectoryInPath($Path)
+# {
+# 	if ( $env:Path.Contains("${Path.Parent.FullName}$Path\\") -match $true )
+# 	{
+# 		return $true
+# 	}
+# 	return $false
+# }
 
 #>
 
