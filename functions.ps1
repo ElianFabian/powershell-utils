@@ -2,10 +2,16 @@
 
 #region Is-Functions
 
-# Checks if a directory if in the Path variable
-function Is-DirectoryInPath($directory)
+<#
+    .DESCRIPTION
+    # Checks if a directory if in the Path variable.
+
+    .PARAMETER Path
+    # The directory to check.
+#>
+function Is-DirectoryInPath($Path)
 {
-	if ( $env:Path.Contains("${directory.Parent.FullName}$directory\\") -match $true )
+	if ( $env:Path.Contains("${Path.Parent.FullName}$Path\\") -match $true )
 	{
 		return $true
 	}
@@ -16,7 +22,16 @@ function Is-DirectoryInPath($directory)
 
 #region Copy-Functions
 
-# Copies the whole structure of a directory, even the files, but empty
+<#
+    .DESCRIPTION
+    # Copies the whole structure of a directory with the files, but empty (with 0 size).
+
+    .PARAMETER Path
+    # The path of the directory to copy.
+
+    .PARAMETER Destination
+    # The destination of the copy.
+#>
 function Copy-FolderStructure_WithEmptyFiles($Path, $Destination)
 {
 	$Path_name = (Get-Item $Path).Name
@@ -28,18 +43,28 @@ function Copy-FolderStructure_WithEmptyFiles($Path, $Destination)
 
 #region Get-Functions
 
-# Gets all the file and folder links from a url
+<#
+    .SYNOPSIS
+    Gets all the file and folder links from a web page (like a VPS).
+
+    .DESCRIPTION
+    This method is supposed to be used to download files and folders with Invoke-FilesFromUri
+    and to do so it's useful to know what is a folder and what is a file when we introduce a url
+    it's going to be a folder which will contain more folders and files.
+
+    .PARAMETER Uri
+    The url of the web page.
+#>
 function Get-FilesFromUri($Uri)
 {
-    # This method is supposed to be used to download files and folders with Invoke-FilesFromUri
-    # and to do so it's useful to know what is a folder and what is a file
-    # when we introduce a url it's going to be a folder which will contain more folders and files
+    # If the Uri doesn't ends with a slash, we add it because it's supposed to be a folder
+    # and ending with and slash it's what we use to differentiate between folders and files.
     if (-Not $Uri.EndsWith("/"))
     {
         $Uri += "/"
     }
     
-    $webResponse = Invoke-WebRequest -Uri $Uri # Curl
+    $webResponse = Invoke-WebRequest -Uri $Uri
 
     $elements = New-Object Collections.Generic.List[String]
 
@@ -55,13 +80,19 @@ function Get-FilesFromUri($Uri)
             $elements.Add("$Uri$inner")
         }
     }
+
 	return $elements
 }
 
-# Given a file full with file paths returns an object that groups those file by their extension
-# If $Path is not specify then it gets the paths from the clipboard
-# If $Path is a folder then it will get the paths of the files from that folder
-# If $Path is a file then it will get the paths from its content
+<#
+    .DESCRIPTION
+    Given a file full with file paths returns an object that groups those file by their extension.
+
+    .PARAMETER Path
+    If $Path is a folder then it will get the paths of the files from that folder.
+    If $Path is a file then it will get the paths from its content.
+    If $Path is not specify then it gets the paths from the clipboard.
+#>
 function Get-FilesObject_GroupBy-Extension($Path)
 {
     $filePaths  = ""
@@ -130,23 +161,40 @@ function Get-FilesObject_GroupBy-Extension($Path)
     }
     return $Files
 }
-# Gets an object return by the Get-Files-GroupBy-Extension-From-File function and return an string with the structure in a class c#/Java form
+
+<#
+    .DESCRIPTION
+    Given a file full with file paths returns a string of a class in the specified programming language that groups those file by their extension as subclasses.
+
+    .PARAMETER Path
+    If $Path is a folder then it will get the paths of the files from that folder.
+    If $Path is a file then it will get the paths from its content.
+    If $Path is not specify then it gets the paths from the clipboard.
+
+    .PARAMETER Type
+    It's the type of the fields, by default it's "String".
+
+    .PARAMETER LanguageType
+    It's the programming language you want the class to be written, by default it's "CSharp".
+
+    .PARAMETER TabSize
+    It's the number of spaces you want to use to indent the code, by default it's 4.
+#>
 function Get-FilesObject_InClassStructureForm($Path, $Type = "String", [LanguageType] $LanguageType = [LanguageType]::CSharp, $TabSize = 4)
 {
     $Files = Get-FilesObject_GroupBy-Extension $Path
 
     $tab = " " * $TabSize
 
-    function Get-Body($items)
+    function Get-ClassFields($items)
     {
         $SEMICOLON = ";"
         $body      = ""
 
         foreach($filePath in $items.Value.GetEnumerator())
         {
-
             $field = $($filePath.Key)
-            $value = "`"$($filePath.Value.Replace("\", "\\"))`""
+            $value = `"$($filePath.Value.Replace("\", "\\"))`"
             $field_value = "$field = $value"
 
             $body += "$tab$tab"
@@ -190,11 +238,10 @@ function Get-FilesObject_InClassStructureForm($Path, $Type = "String", [Language
                 Java { "public $container_extName" }
                 Kotlin { "$container_extName" }
             }
-
             $body += "`n"
             $body += "$tab{`n"
 
-            $body += Get-Body $ext
+            $body += Get-ClassFields $ext
 
             $body  = $body.Substring(0, $body.Length - 1) # Deletes the final escape character
             $body += "`n"
@@ -205,7 +252,7 @@ function Get-FilesObject_InClassStructureForm($Path, $Type = "String", [Language
     {
         $Files.Remove("hasExtension") # Removes the hasExtension property because we don't want to add it to MyFiles class
 
-        $body = Get-Body $Files
+        $body = Get-ClassFields $Files
     }
 
     $body      = $body.Substring(0, $body.Length - 1) # Deletes the final escape character
@@ -215,7 +262,16 @@ function Get-FilesObject_InClassStructureForm($Path, $Type = "String", [Language
 	return $strFiles
 }
 
-# Downloads all the files and folders from a url
+<#
+    .DESCRIPTION
+    Downloads all the files and folders from the given web page (like a VPS).
+
+    .PARAMETER Uri
+    The url of the web page.
+
+    .PARAMETER Destination
+    The destination folder where the files will be downloaded, by default it's the current folder.
+#>
 function Invoke-FilesFromUri($Uri, $Destination = ".\")
 {
 	$elements = Get-FilesFromUri -Uri $Uri
@@ -240,7 +296,17 @@ function Invoke-FilesFromUri($Uri, $Destination = ".\")
 	}
 }
 
-# Downloads all the files and folders from a url inside the folder they are contained
+
+<#
+    .DESCRIPTION
+    # Downloads all the files and folders from a url inside the folder they are contained
+
+    .PARAMETER Uri
+    The url of the web page.
+
+    .PARAMETER Destination
+    The destination folder where the files will be downloaded, by default it's the current folder.
+#>
 function Invoke-FilesFromUri_WithRootFolder($Uri, $Destination = ".\")
 {
     $uriArr = $Uri.Split("/")
@@ -253,28 +319,12 @@ function Invoke-FilesFromUri_WithRootFolder($Uri, $Destination = ".\")
 
 #endregion
 
-<# function Set-Properties(
-    [parameter(ValueFromPipeline)] $inputObject,
-    [hashtable] $properties,
-    [switch] $passThru
-) {
-    process {
-		foreach ($property in $result.PSObject.Properties)
-        {
-            $property.Name
-        }
-        Add-Member -InputObject $inputObject -NotePropertyMembers $properties -NotePropertyValue -force
-        if ([bool]$passThru) { $inputObject }
-		
-		return $inputObject
-    }
-}
- #>
-
 
 #region Watch Later
 
-<# function Rename-ItemAndPath($directory, $newName)
+<#
+
+function Rename-ItemAndPath($directory, $newName)
 {
 	if ( Is-DirectoryInPath($directory) )
 	{
@@ -291,6 +341,25 @@ function Invoke-FilesFromUri_WithRootFolder($Uri, $Destination = ".\")
 		return $true
 	}
 	return $false
-} #>
+}
+
+function Set-Properties(
+    [parameter(ValueFromPipeline)] $inputObject,
+    [hashtable] $properties,
+    [switch] $passThru
+) {
+    process {
+		foreach ($property in $result.PSObject.Properties)
+        {
+            $property.Name
+        }
+        Add-Member -InputObject $inputObject -NotePropertyMembers $properties -NotePropertyValue -force
+        if ([bool]$passThru) { $inputObject }
+		
+		return $inputObject
+    }
+}
+
+#>
 
 #endregion
