@@ -41,7 +41,7 @@ function Copy-FolderStructure_WithEmptyFiles($Path, $Destination)
     .PARAMETER Uri
     The url of the web page.
 #>
-function Get-FilesFromUri($Uri)
+function Get-FileLinksFromUri($Uri)
 {
     # If the Uri doesn't ends with a slash, we add it because it's supposed to be a folder
     # and ending with and slash it's what we use to differentiate between folders and files.
@@ -265,7 +265,7 @@ function Invoke-FilesFromUri($Uri, $Destination = ".\")
 {
     function Invoke-FilesFromUri_Private($Uri, $Destination = ".\")
     {
-        $elements = Get-FilesFromUri -Uri $Uri
+        $elements = Get-FileLinksFromUri -Uri $Uri
 
         $elements | ForEach-Object {
 
