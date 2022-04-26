@@ -225,7 +225,7 @@ function Get-FilesObject_InClassStructureForm
             $body += switch ($LanguageType)
             {
                 CSharp { "public $container_extName" }
-                Java { "public $container_extName" }
+                Java   { "public $container_extName" }
                 Kotlin { "$container_extName" }
             }
             $body += "`n"
