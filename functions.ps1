@@ -187,7 +187,7 @@ function Get-FilesObject_InClassStructureForm
         foreach($filePath in $Items.GetEnumerator())
         {
             $field = $filePath.Key
-            $value = "`"$($filePath.Value.Replace("\", "\\").Replace("/", "\\"))`""
+            $value = "`"$($filePath.Value.Replace("\", "\\"))`""
             $field_value = "$field = $value"
 
             $body += $tab * $TabSize
