@@ -79,7 +79,7 @@ function Get-FilesFromUri($Uri)
     If $Path is a file then it will get the paths from its content.
     If $Path is not specify then it gets the paths from the clipboard.
 #>
-function Get-FilesObject_GroupBy-Extension($Path)
+function Get-FilesObject_GroupBy_Extension($Path)
 {
     $filePaths  = ""
     $fileObject = ""
@@ -168,11 +168,11 @@ function Get-FilesObject_GroupBy-Extension($Path)
 function Get-FilesObject_InClassStructureForm
 (
     $Path,
-    $Type = "String", [LanguageType]
-    $LanguageType = [LanguageType]::CSharp,
+    $Type = "String",
+    [LanguageType] $LanguageType = [LanguageType]::CSharp,
     $TabSize = 4
 ) {
-    $Files = Get-FilesObject_GroupBy-Extension $Path
+    $Files = Get-FilesObject_GroupBy_Extension $Path
 
     $tab = " " * $TabSize
 
