@@ -172,25 +172,25 @@ function Get-FilesObject_InClassStructureForm
     [LanguageType] $LanguageType = [LanguageType]::CSharp,
     $TabSize = 4
 ) {
-    $Files = Get-FilesObject_GroupBy_Extension $Path
+    $filesObject = Get-FilesObject_GroupBy_Extension $Path
 
     $tab = " " * $TabSize
 
-    $hasExtension = $Files.hasExtension
-    $Files.Remove("hasExtension") # Removes the hasExtension property because we don't want to add it to MyFiles class
+    $hasExtension = $filesObject.hasExtension
+    $filesObject.Remove("hasExtension") # Removes the hasExtension property because we don't want to add it to MyFiles class
 
-    function Get-ClassFields($items)
+    function Get-ClassFields($Items, $TabSize)
     {
         $SEMICOLON = ";"
         $body      = ""
 
-        foreach($filePath in $items.Value.GetEnumerator())
+        foreach($filePath in $Items.GetEnumerator())
         {
-            $field =    $($filePath.Key)
+            $field = $filePath.Key
             $value = "`"$($filePath.Value.Replace("\", "\\"))`""
             $field_value = "$field = $value"
 
-            $body += $tab * 2
+            $body += $tab * $TabSize
             $body += switch ($LanguageType)
             {
                 CSharp { "public const $Type" }
@@ -218,7 +218,7 @@ function Get-FilesObject_InClassStructureForm
 
     if ($hasExtension) # If it has extension we have to group the files by their extension
     {
-        foreach ($ext in $Files.GetEnumerator())
+        foreach ($ext in $filesObject.GetEnumerator())
         {
             $container_extName = "$container $($ext.Name)" # class txt
 
@@ -232,16 +232,16 @@ function Get-FilesObject_InClassStructureForm
             $body += "`n"
             $body += "$tab{`n"
 
-            $body += Get-ClassFields $ext
+            $body += Get-ClassFields -Items $ext.Value -TabSize 2
 
-            $body  = $body.Substring(0, $body.Length - 1) # Deletes the final escape character
-            $body += "`n"
+            # $body  = $body.Substring(0, $body.Length - 1) # Deletes the final escape character
+            # $body += "`n"
             $body += "$tab}`n"
         }
     }
     else # If not we only have fields inside a class
     {
-        $body = Get-ClassFields $Files
+        $body = Get-ClassFields -Items $filesObject -TabSize 1
     }
 
     $body      = $body.Substring(0, $body.Length - 1) # Deletes the final escape character
