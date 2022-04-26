@@ -82,8 +82,8 @@ function Get-FilesFromUri($Uri)
 function Get-FilesObject_GroupBy_Extension($Path)
 {
     $filePaths  = ""
-    $fileObject = ""
     $isFolder   = ""
+    $filesObject = [ordered] @{} # Contains the extensions of the files and each one contains the proper files path
 
     if ($Path -ne $null) { $isFolder = (Get-Item $Path).PSIsContainer }
 
@@ -99,8 +99,6 @@ function Get-FilesObject_GroupBy_Extension($Path)
     {
         $filePaths = Get-Content $Path
     }
-
-    $files = [ordered] @{} # Contains the extensions of the files and each one contains the proper files path
 
     $filePaths | ForEach-Object {
         # $_ = "things\txtFiles\this is-my_text.file.txt" (This is for visual help. It's an example of the worst file name case) 
@@ -118,12 +116,12 @@ function Get-FilesObject_GroupBy_Extension($Path)
             # If the name starts with a number it adds a '_' to the beginning
             if ($item_name -match "^[0-9]") { $item_name = $item_name.Insert(0, "_") }
 
-            $files.hasExtension = $true
+            $filesObject.hasExtension = $true
         }
         else
         {
             $item_name = $itemFullName
-            $files.hasExtension = $false
+            $filesObject.hasExtension = $false
         }
 
         $item_name = $item_name.Replace(" ", "_") # "this_is-my_text.file"
@@ -133,19 +131,19 @@ function Get-FilesObject_GroupBy_Extension($Path)
         if ($itemFullName.Contains("."))
         {
             # If the extension doesn't exist in the object then we create it
-            if (-Not $files.Contains($item_ext))
+            if (-Not $filesObject.Contains($item_ext))
             {
-                $files.$item_ext = @{}
+                $filesObject.$item_ext = @{}
             }
             # Adds the file name in the corresponding extension with its value
-            $files.$item_ext.$item_name = $_ # $files.txt.textFile = "things\txtFiles\this is-my_text.file.txt"
+            $filesObject.$item_ext.$item_name = $_ # $filesObject.txt.textFile = "things\txtFiles\this is-my_text.file.txt"
         }
         else
         {
-            $files.$item_name = $_ # $files.textFile = "things\txtFiles\this is-my_text.file.txt"
+            $filesObject.$item_name = $_ # $filesObject.textFile = "things\txtFiles\this is-my_text.file.txt"
         }
     }
-    return $files
+    return $filesObject
 }
 
 <#
