@@ -101,7 +101,7 @@ function Get-FilesObject_GroupBy_Extension($Path)
     }
 
     $filePaths | ForEach-Object {
-        # $_ = "things\txtFiles\this is-my_text.file.txt" (This is for visual help. It's an example of the worst file name case)
+        # $_ = "things\txtFiles\this is-my_text.file.txt" (This is for visual help. It's an example of the worst filename case)
 
         $itemArr      = $_.Split("\") # ["things", "txtFiles", "this is-my_text.file.txt"]
         $itemFullName = $itemArr[-1]  # "this is-my_text.file.txt"
@@ -143,6 +143,7 @@ function Get-FilesObject_GroupBy_Extension($Path)
             $filesObject.$item_name = $_ # $filesObject.textFile = "things\txtFiles\this is-my_text.file.txt"
         }
     }
+
     return $filesObject
 }
 
