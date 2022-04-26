@@ -44,7 +44,7 @@ function Copy-FolderStructure_WithEmptyFiles($Path, $Destination)
 function Get-FilesFromUri($Uri)
 {
     # If the Uri doesn't ends with a slash, we add it because it's supposed to be a folder
-    # and ending with and slash it's what we use to differentiate between folders and files.
+    # and ending with and slash it's what we use to differentiate between folders and files
     if (-Not $Uri.EndsWith("/"))
     {
         $Uri += "/"
@@ -288,7 +288,7 @@ function Invoke-FilesFromUri($Uri, $Destination = ".\")
 
 <#
     .DESCRIPTION
-    # Downloads all the files and folders from a url inside the folder they are contained
+    # Downloads all the files and folders from a url inside the folder they are contained.
 
     .PARAMETER Uri
     The url of the web page.
