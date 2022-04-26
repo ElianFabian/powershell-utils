@@ -20,9 +20,9 @@
 #>
 function Copy-FolderStructure_WithEmptyFiles($Path, $Destination)
 {
-	$Path_name = (Get-Item $Path).Name
-	Get-ChildItem $Path -Directory -Recurse -Name | ForEach-Object { New-Item $Destination\$Path_name\$_ -Type Directory }
-    Get-ChildItem $Path -File      -Recurse -Name | ForEach-Object { New-Item $Destination\$Path_name\$_ }
+	$path_name = (Get-Item $Path).Name
+	Get-ChildItem $Path -Directory -Recurse -Name | ForEach-Object { New-Item $Destination\$path_name\$_ -Type Directory }
+    Get-ChildItem $Path -File      -Recurse -Name | ForEach-Object { New-Item $Destination\$path_name\$_ }
 }
 
 #endregion
@@ -358,4 +358,4 @@ function Set-Properties(
 
 #>
 
-#endregion
+#endregions
