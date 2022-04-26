@@ -44,7 +44,7 @@ function Copy-FolderStructure_WithEmptyFiles($Path, $Destination)
 function Get-FilesFromUri($Uri)
 {
     # If the Uri doesn't ends with a slash, we add it because it's supposed to be a folder
-    # and ending with and slash it's what we use to differentiate between folders and files
+    # and ending with and slash it's what we use to differentiate between folders and files.
     if (-Not $Uri.EndsWith("/"))
     {
         $Uri += "/"
@@ -176,6 +176,9 @@ function Get-FilesObject_InClassStructureForm
 
     $tab = " " * $TabSize
 
+    $hasExtension = $Files.hasExtension
+    $Files.Remove("hasExtension") # Removes the hasExtension property because we don't want to add it to MyFiles class
+
     function Get-ClassFields($items)
     {
         $SEMICOLON = ";"
@@ -187,7 +190,7 @@ function Get-FilesObject_InClassStructureForm
             $value = "`"$($filePath.Value.Replace("\", "\\"))`""
             $field_value = "$field = $value"
 
-            $body += "$tab$tab"
+            $body += $tab * 2
             $body += switch ($LanguageType)
             {
                 CSharp { "public const $Type" }
@@ -213,10 +216,8 @@ function Get-FilesObject_InClassStructureForm
 
     $body = ""
 
-    if ($Files.hasExtension) # If it has extension we have to group the files by their extension
-    { 
-        $Files.Remove("hasExtension") # Removes the hasExtension property because we don't want to add it to MyFiles class
-
+    if ($hasExtension) # If it has extension we have to group the files by their extension
+    {
         foreach ($ext in $Files.GetEnumerator())
         {
             $container_extName = "$container $($ext.Name)" # class txt
@@ -240,8 +241,6 @@ function Get-FilesObject_InClassStructureForm
     }
     else # If not we only have fields inside a class
     {
-        $Files.Remove("hasExtension") # Removes the hasExtension property because we don't want to add it to MyFiles class
-
         $body = Get-ClassFields $Files
     }
 
