@@ -237,7 +237,7 @@ function Get-FilesObject_InClassStructureForm
             $body += "$tab}`n"
         }
     }
-    else # If not we only have fields inside a class
+    else # If not we only have fields inside the class
     {
         $body = Get-ClassFields -Items $filesObject -TabSize 1
     }
