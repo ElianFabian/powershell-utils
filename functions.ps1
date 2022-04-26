@@ -248,9 +248,11 @@ function Get-FilesObject_InClassStructureForm
 	return $strFiles
 }
 
+#endregion
+
 <#
     .DESCRIPTION
-    Downloads all the files and folders from the given web page (like a VPS).
+    # Downloads all the files and folders from a url inside the folder they are contained in the web page (for example a VPS).
 
     .PARAMETER Uri
     The url of the web page.
@@ -260,46 +262,38 @@ function Get-FilesObject_InClassStructureForm
 #>
 function Invoke-FilesFromUri($Uri, $Destination = ".\")
 {
-	$elements = Get-FilesFromUri -Uri $Uri
+    function Invoke-FilesFromUri_Private($Uri, $Destination = ".\")
+    {
+        $elements = Get-FilesFromUri -Uri $Uri
 
-	$elements | ForEach-Object {
+        $elements | ForEach-Object {
 
-		$element_arr = $_.Split("/")
+            $element_arr = $_.Split("/")
 
-		if (-Not $_.EndsWith("/"))
-		{
-			$element_name = $element_arr[$element_arr.Length - 1]
+            if ($_.EndsWith("/"))
+            {
+                $element_name = $element_arr[$element_arr.Length - 2]
 
-			Invoke-WebRequest -Uri $_ -OutFile $Destination\$element_name
-		}
-		else 
-		{
-			$element_name = $element_arr[$element_arr.Length - 2]
+                New-Item -Path "$Destination\$element_name\" -ItemType Directory
+                Invoke-FilesFromUri_Private "$Uri/$element_name/" "$Destination\$element_name\"
+            }
+            else 
+            {
+                $element_name = $element_arr[$element_arr.Length - 1]
+                
+                Invoke-WebRequest -Uri $_ -OutFile "$Destination$element_name"
+            }
+        }
+    }
 
-			New-Item -Path "$Destination\$element_name\" -ItemType Directory
-			Invoke-FilesFromUri "$Uri/$element_name/" "$Destination\$element_name\"
-		}
-	}
-}
-
-<#
-    .DESCRIPTION
-    # Downloads all the files and folders from a url inside the folder they are contained.
-
-    .PARAMETER Uri
-    The url of the web page.
-
-    .PARAMETER Destination
-    The destination folder where the files will be downloaded, by default it's the current folder.
-#>
-function Invoke-FilesFromUri_WithRootFolder($Uri, $Destination = ".\")
-{
     $uriArr = $Uri.Split("/")
     $rootFolderName = $uriArr[$uriArr.Length - 2]
 
     $Destination += "$rootFolderName\"
+
+    New-Item -Path $Destination -ItemType Directory
     
-    Invoke-FilesFromUri $Uri $Destination
+    Invoke-FilesFromUri_Private $Uri $Destination
 }
 
 #endregion
