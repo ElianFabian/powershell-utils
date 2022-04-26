@@ -151,9 +151,9 @@ function Get-FilesObject_GroupBy_Extension($Path)
     Given a file full with file paths returns a string of a class in the specified programming language that groups those file by their extension as subclasses.
 
     .PARAMETER Path
-    If $Path is a folder then it will get the paths of the files from that folder.
-    If $Path is a file then it will get the paths from its content.
-    If $Path is not specify then it gets the paths from the clipboard.
+    If Path is a folder then it will get the paths of the files from that folder.
+    If Path is a file then it will get the paths from its content.
+    If Path is not specify then it gets the paths from the clipboard.
 
     .PARAMETER Type
     It's the type of the fields, by default it's "String".
