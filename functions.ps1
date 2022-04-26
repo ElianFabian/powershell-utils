@@ -49,7 +49,7 @@ function Get-FilesFromUri($Uri)
     {
         $Uri += "/"
     }
-    
+
     $webResponse = Invoke-WebRequest -Uri $Uri
 
     $elements = New-Object Collections.Generic.List[String]
@@ -101,7 +101,7 @@ function Get-FilesObject_GroupBy_Extension($Path)
     }
 
     $filePaths | ForEach-Object {
-        # $_ = "things\txtFiles\this is-my_text.file.txt" (This is for visual help. It's an example of the worst file name case) 
+        # $_ = "things\txtFiles\this is-my_text.file.txt" (This is for visual help. It's an example of the worst file name case)
 
         $itemArr      = $_.Split("\") # ["things", "txtFiles", "this is-my_text.file.txt"]
         $itemFullName = $itemArr[-1]  # "this is-my_text.file.txt"
@@ -277,10 +277,10 @@ function Invoke-FilesFromUri($Uri, $Destination = ".\")
                 New-Item -Path "$Destination\$element_name\" -ItemType Directory
                 Invoke-FilesFromUri_Private "$Uri/$element_name/" "$Destination\$element_name\"
             }
-            else 
+            else
             {
                 $element_name = $element_arr[$element_arr.Length - 1]
-                
+
                 Invoke-WebRequest -Uri $_ -OutFile "$Destination$element_name"
             }
         }
@@ -292,7 +292,7 @@ function Invoke-FilesFromUri($Uri, $Destination = ".\")
     $Destination += "$rootFolderName\"
 
     New-Item -Path $Destination -ItemType Directory
-    
+
     Invoke-FilesFromUri_Private $Uri $Destination
 }
 
@@ -334,7 +334,7 @@ function Set-Properties(
         }
         Add-Member -InputObject $inputObject -NotePropertyMembers $properties -NotePropertyValue -force
         if ([bool]$passThru) { $inputObject }
-		
+
 		return $inputObject
     }
 }
