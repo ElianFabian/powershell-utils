@@ -10,13 +10,13 @@
 
 <#
     .DESCRIPTION
-    # Copies the whole structure of a directory with the files, but empty (with 0 size).
+    Copies the whole structure of a directory with the files, but empty (with 0 size).
 
     .PARAMETER Path
-    # The path of the directory to copy.
+    The path of the directory to copy.
 
     .PARAMETER Destination
-    # The destination of the copy.
+    The destination of the copy.
 #>
 function Copy-FolderStructure_WithEmptyFiles($Path, $Destination)
 {
@@ -253,7 +253,7 @@ function Get-FilesObject_InClassStructureForm
 
 <#
     .DESCRIPTION
-    # Downloads all the files and folders from a url inside the folder they are contained in the web page (for example a VPS).
+    Downloads all the files and folders from a url inside the folder they are contained in the web page (for example a VPS).
 
     .PARAMETER Uri
     The url of the web page.
