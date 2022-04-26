@@ -61,7 +61,7 @@ function Get-FileLinksFromWebPage($Uri)
         $item = $webResponse.Links.Item($_)
         $innerHTML = $item.innerHTML
 
-        if ($innerHTML -eq $item.href) # The links we want satisfy this condition
+        if ($item.innerHTML -eq $item.href) # The links we want satisfy this condition
         {
             $elements.Add("$Uri$innerHTML")
         }
