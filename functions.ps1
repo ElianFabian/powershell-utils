@@ -81,8 +81,8 @@ function Get-FileLinksFromUri($Uri)
 #>
 function Get-FilesObject_GroupBy_Extension($Path)
 {
-    $filePaths  = ""
-    $isFolder   = ""
+    $filePaths   = ""
+    $isFolder    = ""
     $filesObject = [ordered] @{} # Contains the extensions of the files and each one contains the proper files path
 
     if ($Path -ne $null) { $isFolder = (Get-Item $Path).PSIsContainer }
@@ -113,7 +113,7 @@ function Get-FilesObject_GroupBy_Extension($Path)
             $item_ext        = $itemFullNameArr[-1] # "txt"
             $item_name       = $itemFullName.Replace(".$item_ext", "")  # this is-my_text.file
 
-            # If the name starts with a number it adds a '_' to the beginning
+            # If the name starts with a number it adds a '_' to the beginning (variables can't start with a number)
             if ($item_name -match "^[0-9]") { $item_name = $item_name.Insert(0, "_") }
 
             $filesObject.hasExtension = $true
@@ -193,8 +193,8 @@ function Get-FilesObject_InClassStructureForm
             $body += $tab * $TabSize
             $body += switch ($LanguageType)
             {
-                CSharp { "public const $Type" }
-                Java   { "public static final $Type" }
+                CSharp { "public const $Type"         }
+                Java   { "public static final $Type"  }
                 Kotlin { "const val"; $SEMICOLON = "" }
             }
             $body += " "
@@ -206,8 +206,8 @@ function Get-FilesObject_InClassStructureForm
 
     $container = switch ($LanguageType)
     {
-        CSharp { "class" }
-        Java   { "class" }
+        CSharp { "class"  }
+        Java   { "class"  }
         Kotlin { "object" }
     }
 
@@ -227,7 +227,7 @@ function Get-FilesObject_InClassStructureForm
             {
                 CSharp { "public $container_extName" }
                 Java   { "public $container_extName" }
-                Kotlin { "$container_extName" }
+                Kotlin { "$container_extName"        }
             }
             $body += "`n"
             $body += "$tab{`n"
