@@ -103,7 +103,7 @@ function Get-FilesObject_GroupBy_Extension($Path)
     $filePaths | ForEach-Object {
         # $_ = "things\txtFiles\this is-my_text.file.txt" (This is for visual help. It's an example of the worst filename case)
 
-        $itemArr      = $_.Split("\") # ["things", "txtFiles", "this is-my_text.file.txt"]
+        $itemArr      = $_.Split("/\") # ["things", "txtFiles", "this is-my_text.file.txt"]
         $itemFullName = $itemArr[-1]  # "this is-my_text.file.txt"
 
         # This is in case you want to put just a list of strings in a file and just get an object with atributes and values without any kind of group
@@ -187,7 +187,7 @@ function Get-FilesObject_InClassStructureForm
         foreach($filePath in $Items.GetEnumerator())
         {
             $field = $filePath.Key
-            $value = "`"$($filePath.Value.Replace("\", "\\"))`""
+            $value = "`"$($filePath.Value.Replace("\", "\\").Replace("/", "\\"))`""
             $field_value = "$field = $value"
 
             $body += $tab * $TabSize
