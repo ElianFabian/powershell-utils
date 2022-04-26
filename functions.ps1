@@ -234,8 +234,6 @@ function Get-FilesObject_InClassStructureForm
 
             $body += Get-ClassFields -Items $ext.Value -TabSize 2
 
-            # $body  = $body.Substring(0, $body.Length - 1) # Deletes the final escape character
-            # $body += "`n"
             $body += "$tab}`n"
         }
     }
