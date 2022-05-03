@@ -111,7 +111,7 @@ function Get-FilesObject_GroupBy_Extension($Path)
         {
             $itemFullNameArr = $itemArr[-1].Split(".") # ["this is-my_text", "file, txt"]
             $item_ext        = $itemFullNameArr[-1] # "txt"
-            $item_name       = $itemFullName.Replace(".$item_ext", "")  # this is-my_text.file
+            $item_name       = $itemFullName.Replace(".$item_ext", "") # this is-my_text.file
 
             # If the name starts with a number it adds a '_' to the beginning (variables can't start with a number)
             if ($item_name -match "^[0-9]") { $item_name = $item_name.Insert(0, "_") }
