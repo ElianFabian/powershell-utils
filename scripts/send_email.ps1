@@ -1,13 +1,13 @@
-﻿$EmailFrom = “elian.fabian.el.belaizi@gmail.com”
+$EmailFrom = "from_someone.com"
 # https://myaccount.google.com/lesssecureapps
 # https://www.youtube.com/watch?v=cJnNv_rDTe4
-$EmailTo = “someone@gmail.com”
+$EmailTo = "to_someone@gmail.com"
 
-$Subject = “Test”
+$Subject = "Test"
 
-$Body = “Correo enviado desde PowerShell”
+$Body = "Correo enviado desde PowerShell"
 
-$SMTPServer = “smtp.gmail.com”
+$SMTPServer = "smtp.gmail.com"
 
 $SMTPClient = New-Object Net.Mail.SmtpClient($SmtpServer, 587)
 
