@@ -297,6 +297,18 @@ function Invoke-FilesFromUri($Uri, $Destination = ".\")
     Invoke-FilesFromUri_Private $Uri $Destination
 }
 
+<#
+    .DESCRIPTION
+    Executes the content of the file as powershell code from the given uri.
+
+    .PARAMETER Uri
+    The url of the web page.
+#>
+function Invoke-FileContentExpression($Uri)
+{
+    Invoke-Expression (Invoke-WebRequest -Uri $Uri).Content
+}
+
 #endregion
 
 #region Watch Later
