@@ -297,9 +297,11 @@ function Invoke-FilesFromUri($Uri, $Destination = ".\")
     Invoke-FilesFromUri_Private $Uri $Destination
 }
 
+
 <#
     .DESCRIPTION
     Executes the content of the file as powershell code from the given uri.
+    To use this function you have to dot source it (insert a dot at the beginning of the function call).
 
     .PARAMETER Uri
     The url of the web page.
@@ -314,7 +316,7 @@ function Invoke-FileContentExpression($Uri)
 #region Watch Later
 
 <#
-
+*
 function Rename-ItemAndPath($directory, $newName)
 {
 	if ( Is-DirectoryInPath($directory) )
