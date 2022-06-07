@@ -165,7 +165,7 @@ function Get-FilesObject_GroupBy_Extension($Path)
     .PARAMETER TabSize
     It's the number of spaces you want to use to indent the code, by default it's 4.
 #>
-function Get-FilesObject_InClassStructureForm
+function Get-FilesObject_InClassStructure
 (
     $Path,
     $Type = "String",
