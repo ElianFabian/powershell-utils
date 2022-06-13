@@ -313,6 +313,31 @@ function Invoke-FileContentExpression($Uri)
 
 #endregion
 
+#region ConverTo
+
+<#
+    .DESCRIPTION
+    Converts an object into a string in properties file format.
+
+    .PARAMETER PropertiesObject
+    The object to convert into a string in properties file format.
+#>
+function ConvertTo-StringFileProperties($PropertiesObject)
+{
+    $strProperties = ""
+
+    foreach($key in $PropertiesObject.Keys)
+    {
+        $value = $PropertiesObject.$key
+
+        $strProperties += "$key=$value`n"
+    }
+
+    return $strProperties
+}
+
+#endregion
+
 #region Watch Later
 
 <#
