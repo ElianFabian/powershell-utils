@@ -252,16 +252,22 @@ function Get-FilesObject_InClassStructure
 #endregion
 
 <#
+    .SYNOPSIS
+    Gets content from a web page on the Internet (like a VPS).
+
     .DESCRIPTION
-    Downloads all the files and folders from a url inside the folder they are contained in the web page (for example a VPS).
+    Downloads all the files and folders from a url inside the folder they are contained in a web page (for example a VPS).
 
     .PARAMETER Uri
     The url of the web page.
 
     .PARAMETER Destination
     The destination folder where the files will be downloaded, by default it's the current folder.
+
+    .PARAMETER Recurse
+    If present it downloads all the files from every single folder recursively.
 #>
-function Invoke-FilesFromUri($Uri, $Destination = ".\")
+function Invoke-FilesFromUri($Uri, $Destination = ".\", [switch] $Recurse)
 {
     function Invoke-FilesFromUri_Private($Uri, $Destination = ".\")
     {
@@ -276,7 +282,11 @@ function Invoke-FilesFromUri($Uri, $Destination = ".\")
                 $element_name = $element_arr[$element_arr.Length - 2]
 
                 New-Item -Path "$Destination\$element_name\" -ItemType Directory
-                Invoke-FilesFromUri_Private "$Uri/$element_name/" "$Destination\$element_name\"
+
+                if ($Recurse)
+                {
+                    Invoke-FilesFromUri_Private "$Uri/$element_name/" "$Destination\$element_name\"
+                }
             }
             else
             {
