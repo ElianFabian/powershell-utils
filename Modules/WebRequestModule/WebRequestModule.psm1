@@ -7,7 +7,7 @@
     Gets all the file and folder links from a web page (like a VPS).
 
     .DESCRIPTION
-    This method is supposed to be used to download files and folders with Invoke-FilesFromUri
+    This method is supposed to be used to download files and folders in Invoke-FilesFromUri
     and to do so it's useful to know what is a folder and what is a file when we introduce a url
     it's going to be a folder which will contain more folders and files.
 
