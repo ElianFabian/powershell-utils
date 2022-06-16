@@ -80,29 +80,29 @@ function Get-FilesObject-GroupBy-Extension($Path)
 }
 
 function Get-ClassFields($Items, $TabSize)
-    {
-        $SEMICOLON = ";"
-        $body      = ""
+{
+	$SEMICOLON = ";"
+	$body      = ""
 
-        foreach($filePath in $Items.GetEnumerator())
-        {
-            $field = $filePath.Key
-            $value = "`"$($filePath.Value.Replace("\", "/"))`""
-            $field_value = "$field = $value"
+	foreach($filePath in $Items.GetEnumerator())
+	{
+		$field = $filePath.Key
+		$value = "`"$($filePath.Value.Replace("\", "/"))`""
+		$field_value = "$field = $value"
 
-            $body += $tab * $TabSize
-            $body += switch ($LanguageType)
-            {
-                CSharp { "public const $Type"         }
-                Java   { "public static final $Type"  }
-                Kotlin { "const val"; $SEMICOLON = "" }
-            }
-            $body += " "
-            $body += "$field_value$SEMICOLON`n"
-        }
+		$body += $tab * $TabSize
+		$body += switch ($LanguageType)
+		{
+			CSharp { "public const $Type"         }
+			Java   { "public static final $Type"  }
+			Kotlin { "const val"; $SEMICOLON = "" }
+		}
+		$body += " "
+		$body += "$field_value$SEMICOLON`n"
+	}
 
-        return $body
-    }
+	return $body
+}
 
 <#
     .DESCRIPTION
