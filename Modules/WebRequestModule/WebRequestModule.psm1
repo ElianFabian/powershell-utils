@@ -47,32 +47,32 @@ function Get-FileLinksFromUri($Uri)
 # This is the prive version of Invoke-FilesFromUri, we have to define the other function in other to
 # make the files be contained in the folder given in the Uri.
 function Invoke-FilesFromUri-Without-ContainingFolder($Uri, $Destination = ".\")
-    {
-        $elements = Get-FileLinksFromUri -Uri $Uri
+{
+    $elements = Get-FileLinksFromUri -Uri $Uri
 
-        $elements | ForEach-Object {
+    $elements | ForEach-Object {
 
-            $element_arr = $_.Split("/")
+        $element_arr = $_.Split("/")
 
-            if ($_.EndsWith("/"))
+        if ($_.EndsWith("/"))
+        {
+            $element_name = $element_arr[$element_arr.Length - 2]
+
+            New-Item -Path "$Destination\$element_name\" -ItemType Directory
+
+            if ($Recurse)
             {
-                $element_name = $element_arr[$element_arr.Length - 2]
-
-                New-Item -Path "$Destination\$element_name\" -ItemType Directory
-
-                if ($Recurse)
-                {
-                    Invoke-FilesFromUri-Without-ContainingFolder "$Uri/$element_name/" "$Destination\$element_name\"
-                }
-            }
-            else
-            {
-                $element_name = $element_arr[$element_arr.Length - 1]
-
-                Invoke-WebRequest -Uri $_ -OutFile "$Destination$element_name"
+                Invoke-FilesFromUri-Without-ContainingFolder "$Uri/$element_name/" "$Destination\$element_name\"
             }
         }
+        else
+        {
+            $element_name = $element_arr[$element_arr.Length - 1]
+
+            Invoke-WebRequest -Uri $_ -OutFile "$Destination$element_name"
+        }
     }
+}
 
 <#
     .SYNOPSIS
