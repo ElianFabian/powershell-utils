@@ -17,7 +17,11 @@ foreach ($module in $modules)
     $usingModuleStatments += "using module $module`n"
 }
 
-$textToAdd = "`n`n# Modules added using Append-UsingModuleStatements-IntoProfile.ps1`n`n$usingModuleStatments"
+$SEPARATOR = "# ===================================================================================="
+
+$textToAdd = "`n`n$SEPARATOR`n"
+$textToAdd += "`# Modules added using Append-UsingModuleStatements-IntoProfile.ps1`n`n$usingModuleStatments"
+$textToAdd += "`n# ====================================================================================`n`n"
 
 Add-Content -Path $PROFILE -Value $textToAdd
 
