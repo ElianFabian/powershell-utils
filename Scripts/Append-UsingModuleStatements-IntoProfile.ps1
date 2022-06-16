@@ -19,7 +19,6 @@ foreach ($module in $modules)
 
 $textToAdd = "`n`n# Modules added using Append-UsingModuleStatements-IntoProfile.ps1`n`n$usingModuleStatments"
 
-
 Add-Content -Path $PROFILE -Value $textToAdd
 
 Start-Process notepad $PROFILE
