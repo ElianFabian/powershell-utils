@@ -10,8 +10,11 @@
     If $Path is a folder then it will get the paths of the files from that folder.
     If $Path is a file then it will get the paths from its content.
     If $Path is not specify then it gets the paths from the clipboard.
+
+    .PARAMETER Recurse
+    If $Path is a folder then you can get all the files' path recursely.
 #>
-function Get-FilesObject-GroupBy-Extension($Path)
+function Get-FilesObject-GroupBy-Extension($Path, [switch] $Recurse)
 {
     $filePaths   = ""
     $isFolder    = ""
@@ -25,7 +28,7 @@ function Get-FilesObject-GroupBy-Extension($Path)
     }
     elseif ($isFolder)
     {
-        $filePaths = (Get-ChildItem $Path -File).FullName
+        $filePaths = (Get-ChildItem -Path $Path -File -Recurse:$Recurse).FullName
     }
     else
     {
@@ -121,15 +124,19 @@ function Get-ClassFields($Items, $TabSize)
 
     .PARAMETER TabSize
     It's the number of spaces you want to use to indent the code, by default it's 4.
+
+    .PARAMETER Recurse
+    If $Path is a folder then you can get all the files' path recursely.
 #>
 function Get-FilesObject-InClassStructure
 (
     $Path,
     $Type = "String",
     [LanguageType] $LanguageType = [LanguageType]::CSharp,
-    $TabSize = 4
+    $TabSize = 4,
+    [switch] $Recurse
 ) {
-    $filesObject = Get-FilesObject-GroupBy-Extension $Path
+    $filesObject = Get-FilesObject-GroupBy-Extension -Path $Path -Recurse:$Recurse
 
     $tab = " " * $TabSize
 
