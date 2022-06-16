@@ -2,7 +2,7 @@
 
 
 
-# In this file we have to add the modules that contains classes or enums because they need to be imported with the using statement.
+# In this file we have to add the modules that contains classes or enums because they need to be imported with the "using module" statement.
 
 
 
