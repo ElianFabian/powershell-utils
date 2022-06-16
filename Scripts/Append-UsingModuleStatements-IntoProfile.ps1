@@ -20,7 +20,7 @@ foreach ($module in $modules)
 
 $SEPARATOR = "# ===================================================================================="
 
-$textToAdd = "`n`n# Modules added using Append-UsingModuleStatements-IntoProfile.ps1"
+$textToAdd = "`n`n# Modules added with Append-UsingModuleStatements-IntoProfile.ps1"
 $textToAdd += "`n$SEPARATOR`n`n"
 $textToAdd += $usingModuleStatments
 $textToAdd += "`n$SEPARATOR`n"
