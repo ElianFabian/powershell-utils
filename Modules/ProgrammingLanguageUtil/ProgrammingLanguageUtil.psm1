@@ -18,7 +18,7 @@ function Get-FilesObject-GroupBy-Extension($Path, [switch] $Recurse)
 {
     $filePaths   = ""
     $isFolder    = ""
-    $filesObject = [ordered] @{} # Contains the extensions of the files and each one contains the proper files path
+    $filesObject = [ordered] @{} # Contains the extensions of the files and each one contains the proper files' path
 
     if ($Path -ne $null) { $isFolder = (Get-Item $Path).PSIsContainer }
 
