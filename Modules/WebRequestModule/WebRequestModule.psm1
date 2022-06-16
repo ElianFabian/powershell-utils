@@ -46,7 +46,7 @@ function Get-FileLinksFromUri($Uri)
 
 # This is the prive version of Invoke-FilesFromUri, we have to define the other function in other to
 # make the files be contained in the folder given in the Uri.
-function Invoke-FilesFromUri_Private($Uri, $Destination = ".\")
+function Invoke-FilesFromUri-Without-ContainingFolder($Uri, $Destination = ".\")
     {
         $elements = Get-FileLinksFromUri -Uri $Uri
 
@@ -62,7 +62,7 @@ function Invoke-FilesFromUri_Private($Uri, $Destination = ".\")
 
                 if ($Recurse)
                 {
-                    Invoke-FilesFromUri_Private "$Uri/$element_name/" "$Destination\$element_name\"
+                    Invoke-FilesFromUri-Without-ContainingFolder "$Uri/$element_name/" "$Destination\$element_name\"
                 }
             }
             else
@@ -99,7 +99,7 @@ function Invoke-FilesFromUri($Uri, $Destination = ".\", [switch] $Recurse)
 
     New-Item -Path $Destination -ItemType Directory
 
-    Invoke-FilesFromUri_Private $Uri $Destination
+    Invoke-FilesFromUri-Without-ContainingFolder $Uri $Destination
 }
 
 

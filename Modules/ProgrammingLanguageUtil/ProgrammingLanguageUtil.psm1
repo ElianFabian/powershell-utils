@@ -11,7 +11,7 @@
     If $Path is a file then it will get the paths from its content.
     If $Path is not specify then it gets the paths from the clipboard.
 #>
-function Get-FilesObject_GroupBy_Extension($Path)
+function Get-FilesObject-GroupBy-Extension($Path)
 {
     $filePaths   = ""
     $isFolder    = ""
@@ -122,14 +122,14 @@ function Get-ClassFields($Items, $TabSize)
     .PARAMETER TabSize
     It's the number of spaces you want to use to indent the code, by default it's 4.
 #>
-function Get-FilesObject_InClassStructure
+function Get-FilesObject-InClassStructure
 (
     $Path,
     $Type = "String",
     [LanguageType] $LanguageType = [LanguageType]::CSharp,
     $TabSize = 4
 ) {
-    $filesObject = Get-FilesObject_GroupBy_Extension $Path
+    $filesObject = Get-FilesObject-GroupBy-Extension $Path
 
     $tab = " " * $TabSize
 
@@ -185,5 +185,5 @@ function Get-FilesObject_InClassStructure
 
 Export-ModuleMember `
     -Function `
-        Get-FilesObject_GroupBy_Extension,
-        Get-FilesObject_InClassStructure
+        Get-FilesObject-GroupBy-Extension,
+        Get-FilesObject-InClassStructure

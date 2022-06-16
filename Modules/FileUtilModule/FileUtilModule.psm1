@@ -47,7 +47,7 @@ function ConvertFrom-StringFileProperties($Path)
     .PARAMETER Destination
     The destination of the copy.
 #>
-function Copy-FolderStructure_WithEmptyFiles($Path, $Destination)
+function Copy-FolderStructure-WithEmptyFiles($Path, $Destination)
 {
 	$path_name = (Get-Item $Path).Name
 	Get-ChildItem $Path -Directory -Recurse -Name | ForEach-Object { New-Item $Destination\$path_name\$_ -Type Directory }
@@ -58,4 +58,4 @@ function Copy-FolderStructure_WithEmptyFiles($Path, $Destination)
 Export-ModuleMember -Function `
     ConvertTo-StringFileProperties,
     ConvertFrom-StringFileProperties,
-    Copy-FolderStructure_WithEmptyFiles
+    Copy-FolderStructure-WithEmptyFiles
