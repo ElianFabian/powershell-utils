@@ -32,11 +32,10 @@ function Get-FileLinksFromUri($Uri)
     0..($nElements - 1) | ForEach-Object {
 
         $item = $webResponse.Links.Item($_)
-        $innerHTML = $item.innerHTML
 
         if ($item.innerHTML -eq $item.href) # The links we want satisfy this condition
         {
-            $elements.Add("$Uri$innerHTML")
+            $elements.Add("$Uri$($item.innerHTML)")
         }
     }
 
