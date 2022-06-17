@@ -19,14 +19,18 @@
     If $Path is a folder then you can get all the files' path recursely.
 
     .PARAMETER Relative
-    If $Path is a folder the paths of the files will be relative to the indicated directory.
+    If $Path is a folder the paths of the files will be relative to $Path directory.
+
+    .PARAMETER RelativeTo
+    If $Path is a folder the paths of the files will be relative to $RelativeTo directory.
 #>
 function Get-FilesObject-GroupBy-Extension
 (
     [string] $Path,
     [switch] $Recurse,
-    [switch] $Relative
-) {
+    [switch] $Relative,
+    [string] $RelativeTo = "."
+) { 
     $filePaths   = ""
     $isFolder    = ""
     $filesObject = [ordered] @{} # Contains the files' path group by their extension
@@ -41,7 +45,14 @@ function Get-FilesObject-GroupBy-Extension
     {
         $filePaths = (Get-ChildItem -Path $Path -File -Recurse:$Recurse).FullName
 
-        if ($Relative) { $filePaths = ($filePaths | Resolve-Path -Relative) }
+        if ($Relative)
+        {
+            $currentLocation = (Get-Location).Path
+
+            Set-Location $RelativeTo
+            $filePaths = ($filePaths | Resolve-Path -Relative )
+            Set-Location $currentLocation
+        }
     }
     else
     {
@@ -52,7 +63,7 @@ function Get-FilesObject-GroupBy-Extension
         # $_ = "things\txtFiles\this is-my_text.file.txt" (This is for visual help. It's an example of the worst filename case)
 
         $itemArray    = $_.Split("/\") # ["things", "txtFiles", "this is-my_text.file.txt"]
-        $itemFullName = $itemArray[-1]  # "this is-my_text.file.txt"
+        $itemFullName = $itemArray[-1] # "this is-my_text.file.txt"
 
         # This is in case you want to put just a list of strings in a file and just get an object with atributes and values without any kind of group
         if ($itemFullName.Contains("."))
@@ -146,6 +157,10 @@ function Get-ClassFields([System.Object] $Items, [int] $TabSize)
 
     .PARAMETER Relative
     If $Path is a folder the paths of the files will be relative to the indicated directory.
+
+    .PARAMETER RelativeTo
+    If $Path is a folder the paths of the files will be relative to $RelativeTo directory.
+    You have to add the $Relative parameter to use this parameter.
 #>
 function Get-FilesObject-InClassStructure
 (
@@ -154,9 +169,10 @@ function Get-FilesObject-InClassStructure
     [LanguageType] $LanguageType = [LanguageType]::CSharp,
     [int]          $TabSize      = 4,
     [switch]       $Recurse,
-    [switch]       $Relative
+    [switch]       $Relative,
+    [string]       $RelativeTo   = "."
 ) {
-    $filesObject = Get-FilesObject-GroupBy-Extension -Path $Path -Recurse:$Recurse -Relative:$Relative
+    $filesObject = Get-FilesObject-GroupBy-Extension -Path $Path -Recurse:$Recurse -Relative:$Relative -RelativeTo $RelativeTo
 
     $tab = " " * $TabSize
 
