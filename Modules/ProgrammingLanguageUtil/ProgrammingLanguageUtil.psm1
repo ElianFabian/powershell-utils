@@ -116,6 +116,7 @@ function Get-ClassFields([System.Object] $Items, [int] $TabSize)
 	{
 		$field = $filePath.Key
 		$value = "`"$($filePath.Value.Replace("\", "/"))`""
+
 		$field_value = "$field = $value"
 
 		$body += $tab * $TabSize
@@ -177,6 +178,7 @@ function Get-FilesObject-InClassStructure
     $tab = " " * $TabSize
 
     $hasExtension = $filesObject.hasExtension
+
     $filesObject.Remove("hasExtension") # Removes the hasExtension property because we don't want to add it to MyFiles class
 
     $container = switch ($LanguageType)
@@ -204,8 +206,7 @@ function Get-FilesObject-InClassStructure
                 Java   { "public $container_extName" }
                 Kotlin { "$container_extName"        }
             }
-            $body += "`n"
-            $body += "$tab{`n"
+            $body += "`n$tab{`n"
 
             $body += Get-ClassFields -Items $ext.Value -TabSize 2
 
@@ -218,6 +219,7 @@ function Get-FilesObject-InClassStructure
     }
 
     $body      = $body.Substring(0, $body.Length - 1) # Deletes the final escape character
+
     $strFiles += "$body`n"
     $strFiles += "}"
 
