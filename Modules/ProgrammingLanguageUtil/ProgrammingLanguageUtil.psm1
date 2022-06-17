@@ -107,10 +107,17 @@ function Get-FilesObject-GroupBy-Extension
     return $filesObject
 }
 
-function Get-ClassFields([System.Object] $Items, [int] $TabSize)
-{
+function Get-ClassFields
+(
+    [System.Object] $Items,
+    [string]        $CurrentTab,
+    [int]           $FieldTabSize,
+    [string]        $Type
+) {
 	$SEMICOLON = ";"
 	$body      = ""
+
+    $fieldTab = $CurrentTab * $FieldTabSize
 
 	foreach($filePath in $Items.GetEnumerator())
 	{
@@ -119,7 +126,7 @@ function Get-ClassFields([System.Object] $Items, [int] $TabSize)
 
 		$field_value = "$field = $value"
 
-		$body += $tab * $TabSize
+		$body += $fieldTab
 		$body += switch ($LanguageType)
 		{
 			CSharp { "public const $Type"         }
@@ -144,8 +151,8 @@ function Get-ClassFields([System.Object] $Items, [int] $TabSize)
     If Path is a file then it will get the paths from its content.
     If Path is not specify then it gets the paths from the clipboard.
 
-    .PARAMETER Type
-    It's the type of the fields, by default it's "String".
+    .PARAMETER FieldType
+    It's the type of the fields, by default it's "string".
 
     .PARAMETER LanguageType
     It's the programming language you want the class to be written, by default it's "CSharp".
@@ -166,7 +173,7 @@ function Get-ClassFields([System.Object] $Items, [int] $TabSize)
 function Get-FilesObject-InClassStructure
 (
     [string]       $Path,
-    [string]       $Type         = "String",
+    [string]       $FieldType    = "String",
     [LanguageType] $LanguageType = [LanguageType]::CSharp,
     [int]          $TabSize      = 4,
     [switch]       $Recurse,
@@ -208,14 +215,14 @@ function Get-FilesObject-InClassStructure
             }
             $body += "`n$tab{`n"
 
-            $body += Get-ClassFields -Items $ext.Value -TabSize 2
+            $body += Get-ClassFields -Items $ext.Value -CurrentTab $tab -FieldTabSize 2 -Type $FieldType
 
             $body += "$tab}`n"
         }
     }
     else # If not we only have fields inside the class
     {
-        $body = Get-ClassFields -Items $filesObject -TabSize 1
+        $body = Get-ClassFields -Items $filesObject -CurrentTab $tab -FieldTabSize 1 -Type $FieldType
     }
 
     $body      = $body.Substring(0, $body.Length - 1) # Deletes the final escape character
