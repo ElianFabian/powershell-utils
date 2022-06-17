@@ -159,7 +159,7 @@ function Get-FilesObject-InClassStructure
     {
         foreach ($ext in $filesObject.GetEnumerator())
         {
-            $container_extName = "$container $($ext.Name)" # class txt
+            $container_extName = "$container $($ext.Name)" # public class txt
 
             $body += $tab
             $body += switch ($LanguageType)
