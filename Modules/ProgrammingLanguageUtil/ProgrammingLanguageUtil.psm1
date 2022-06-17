@@ -121,6 +121,8 @@ function Get-ClassFields([System.Object] $Items, [int] $TabSize)
 	return $body
 }
 
+##### WARNING: this function doesn't yet work well when mixing files with extensions and files without extensions #####
+
 <#
     .DESCRIPTION
     Given a file full with file paths returns a string of a class in the specified programming language that groups those file by their extension as subclasses.
