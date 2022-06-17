@@ -17,15 +17,19 @@
 
     .PARAMETER Recurse
     If $Path is a folder then you can get all the files' path recursely.
+
+    .PARAMETER Relative
+    If $Path is a folder the paths of the files will be relative to the indicated directory.
 #>
 function Get-FilesObject-GroupBy-Extension
 (
     [string] $Path,
-    [switch] $Recurse
+    [switch] $Recurse,
+    [switch] $Relative
 ) {
     $filePaths   = ""
     $isFolder    = ""
-    $filesObject = [ordered] @{} # Contains the extensions of the files and each one contains the proper files' path
+    $filesObject = [ordered] @{} # Contains the files' path group by their extension
 
     if ($Path -ne $null) { $isFolder = (Get-Item $Path).PSIsContainer }
 
@@ -36,6 +40,8 @@ function Get-FilesObject-GroupBy-Extension
     elseif ($isFolder)
     {
         $filePaths = (Get-ChildItem -Path $Path -File -Recurse:$Recurse).FullName
+
+        if ($Relative) { $filePaths = ($filePaths | Resolve-Path -Relative) }
     }
     else
     {
@@ -45,15 +51,15 @@ function Get-FilesObject-GroupBy-Extension
     $filePaths | ForEach-Object {
         # $_ = "things\txtFiles\this is-my_text.file.txt" (This is for visual help. It's an example of the worst filename case)
 
-        $itemArr      = $_.Split("/\") # ["things", "txtFiles", "this is-my_text.file.txt"]
-        $itemFullName = $itemArr[-1]  # "this is-my_text.file.txt"
+        $itemArray    = $_.Split("/\") # ["things", "txtFiles", "this is-my_text.file.txt"]
+        $itemFullName = $itemArray[-1]  # "this is-my_text.file.txt"
 
         # This is in case you want to put just a list of strings in a file and just get an object with atributes and values without any kind of group
         if ($itemFullName.Contains("."))
         {
-            $itemFullNameArr = $itemArr[-1].Split(".") # ["this is-my_text", "file, txt"]
-            $item_ext        = $itemFullNameArr[-1] # "txt"
-            $item_name       = $itemFullName.Replace(".$item_ext", "") # this is-my_text.file
+            $itemFullNameArray = $itemArray[-1].Split(".")               # ["this is-my_text", "file, txt"]
+            $item_ext          = $itemFullNameArray[-1]                  # "txt"
+            $item_name         = $itemFullName.Replace(".$item_ext", "") # this is-my_text.file
 
             # If the name starts with a number it adds a '_' to the beginning (variables can't start with a number)
             if ($item_name -match "^[0-9]") { $item_name = $item_name.Insert(0, "_") }
@@ -77,6 +83,7 @@ function Get-FilesObject-GroupBy-Extension
             {
                 $filesObject.$item_ext = @{}
             }
+
             # Adds the file name in the corresponding extension with its value
             $filesObject.$item_ext.$item_name = $_ # $filesObject.txt.textFile = "things\txtFiles\this is-my_text.file.txt"
         }
@@ -134,6 +141,9 @@ function Get-ClassFields([System.Object] $Items, [int] $TabSize)
 
     .PARAMETER Recurse
     If $Path is a folder then you can get all the files' path recursely.
+
+    .PARAMETER Relative
+    If $Path is a folder the paths of the files will be relative to the indicated directory.
 #>
 function Get-FilesObject-InClassStructure
 (
@@ -141,9 +151,10 @@ function Get-FilesObject-InClassStructure
     [string]       $Type         = "String",
     [LanguageType] $LanguageType = [LanguageType]::CSharp,
     [int]          $TabSize      = 4,
-    [switch]       $Recurse
+    [switch]       $Recurse,
+    [switch]       $Relative
 ) {
-    $filesObject = Get-FilesObject-GroupBy-Extension -Path $Path -Recurse:$Recurse
+    $filesObject = Get-FilesObject-GroupBy-Extension -Path $Path -Recurse:$Recurse -Relative:$Relative
 
     $tab = " " * $TabSize
 
