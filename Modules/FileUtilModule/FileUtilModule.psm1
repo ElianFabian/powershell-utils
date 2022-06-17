@@ -13,7 +13,7 @@
     .PARAMETER PropertiesObject
     The object to convert into a string in properties file format.
 #>
-function ConvertTo-StringFileProperties($PropertiesObject)
+function ConvertTo-StringFileProperties([string] $PropertiesObject)
 {
     $strProperties = ""
 
@@ -34,7 +34,7 @@ function ConvertTo-StringFileProperties($PropertiesObject)
     .PARAMETER Path
     The path to the file containing the string in properties file format.
 #>
-function ConvertFrom-StringFileProperties($Path)
+function ConvertFrom-StringFileProperties([string] $Path)
 {
     return Get-Content .\file.txt | ConvertFrom-StringData
 }
@@ -51,7 +51,7 @@ function ConvertFrom-StringFileProperties($Path)
     .PARAMETER Destination
     The destination of the copy.
 #>
-function Copy-FolderStructure-WithEmptyFiles($Path, $Destination)
+function Copy-FolderStructure-WithEmptyFiles([string] $Path, [string] $Destination)
 {
 	$path_name = (Get-Item $Path).Name
 	Get-ChildItem $Path -Directory -Recurse -Name | ForEach-Object { New-Item $Destination\$path_name\$_ -Type Directory }

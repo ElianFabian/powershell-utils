@@ -18,7 +18,7 @@
     .PARAMETER Uri
     The url of the web page.
 #>
-function Get-FileLinksFromUri($Uri)
+function Get-FileLinksFromUri([string] $Uri)
 {
     # If the Uri doesn't ends with a slash then we add it because it's supposed to be a folder
     # and ending with and slash it's what we use to differentiate between folders and files.
@@ -49,7 +49,7 @@ function Get-FileLinksFromUri($Uri)
 
 # This is the prive version of Invoke-FilesFromUri, we have to define the other function in other to
 # make the files be contained in the folder given in the Uri.
-function Invoke-FilesFromUri-Without-ContainingFolder($Uri, $Destination = ".\")
+function Invoke-FilesFromUri-Without-ContainingFolder([string] $Uri, [string] $Destination = ".\")
 {
     $elements = Get-FileLinksFromUri -Uri $Uri
 
@@ -93,7 +93,7 @@ function Invoke-FilesFromUri-Without-ContainingFolder($Uri, $Destination = ".\")
     .PARAMETER Recurse
     If present it downloads all the files from every single folder recursively.
 #>
-function Invoke-FilesFromUri($Uri, $Destination = ".\", [switch] $Recurse)
+function Invoke-FilesFromUri([string] $Uri, [string] $Destination = ".\", [switch] $Recurse)
 {
     $uriArr = $Uri.Split("/")
     $rootFolderName = $uriArr[$uriArr.Length - 2]
@@ -115,7 +115,7 @@ function Invoke-FilesFromUri($Uri, $Destination = ".\", [switch] $Recurse)
     .PARAMETER Uri
     The url of the web page.
 #>
-function Invoke-FileContentExpression($Uri)
+function Invoke-FileContentExpression([string] $Uri)
 {
     Invoke-Expression (Invoke-WebRequest -Uri $Uri).Content
 }

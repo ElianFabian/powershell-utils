@@ -18,8 +18,11 @@
     .PARAMETER Recurse
     If $Path is a folder then you can get all the files' path recursely.
 #>
-function Get-FilesObject-GroupBy-Extension($Path, [switch] $Recurse)
-{
+function Get-FilesObject-GroupBy-Extension
+(
+    [string] $Path,
+    [switch] $Recurse
+) {
     $filePaths   = ""
     $isFolder    = ""
     $filesObject = [ordered] @{} # Contains the extensions of the files and each one contains the proper files' path
@@ -86,7 +89,7 @@ function Get-FilesObject-GroupBy-Extension($Path, [switch] $Recurse)
     return $filesObject
 }
 
-function Get-ClassFields($Items, $TabSize)
+function Get-ClassFields([System.Object] $Items, [int] $TabSize)
 {
 	$SEMICOLON = ";"
 	$body      = ""
@@ -134,11 +137,11 @@ function Get-ClassFields($Items, $TabSize)
 #>
 function Get-FilesObject-InClassStructure
 (
-    $Path,
-    $Type = "String",
+    [string]       $Path,
+    [string]       $Type         = "String",
     [LanguageType] $LanguageType = [LanguageType]::CSharp,
-    $TabSize = 4,
-    [switch] $Recurse
+    [int]          $TabSize      = 4,
+    [switch]       $Recurse
 ) {
     $filesObject = Get-FilesObject-GroupBy-Extension -Path $Path -Recurse:$Recurse
 
