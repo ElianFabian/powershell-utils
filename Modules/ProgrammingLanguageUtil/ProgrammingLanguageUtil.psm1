@@ -2,6 +2,10 @@
 
 
 
+# From repository: https://github.com/ElianFabian/powershell-utils
+
+
+
 <#
     .DESCRIPTION
     Given a file full with file paths returns an object that groups those file by their extension.
