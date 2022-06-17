@@ -1,4 +1,4 @@
-# Remove-Modules-InEnvPSModulePath.ps1
+# Remove-AllModules-InEnvPSModulePath.ps1
 
 
 
