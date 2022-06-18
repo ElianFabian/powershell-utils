@@ -17,7 +17,7 @@ function ConvertTo-StringFileProperties([string] $PropertiesObject)
 {
     $strProperties = ""
 
-    foreach($key in $PropertiesObject.Keys)
+    foreach ($key in $PropertiesObject.Keys)
     {
         $value = $PropertiesObject.$key
 
@@ -43,7 +43,7 @@ function ConvertFrom-StringFileProperties([string] $Path)
 
 <#
     .SYNOPSIS
-    Makes an empty copy of a directory structure.
+    Creates an empty copy of a directory structure.
 
     .DESCRIPTION
     Creates a copy of the whole structure of a directory with the files, but empty (with 0 size).
