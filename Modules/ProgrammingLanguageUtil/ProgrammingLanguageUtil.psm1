@@ -11,9 +11,9 @@
     Given a file full with file paths returns an object that groups those file by their extension.
 
     .PARAMETER Path
-    If $Path is a folder then it will get the paths of the files from that folder.
-    If $Path is a file then it will get the paths from its content.
-    If $Path is not specify then it gets the paths from the clipboard.
+    If it's a folder then it will get the paths of the files from that folder.
+    If it's a file then it will get the paths from its content.
+    If it's omitted then it gets the paths from the clipboard.
 
     .PARAMETER Recurse
     If $Path is a folder then you can get all the files' path recursely.
@@ -23,6 +23,7 @@
 
     .PARAMETER RelativeTo
     If $Path is a folder the paths of the files will be relative to $RelativeTo directory.
+    $Relative parameter must be added in order to use this parameter.
 #>
 function Get-FilesObject-GroupBy-Extension
 (
@@ -168,7 +169,7 @@ function Get-ClassFields
 
     .PARAMETER RelativeTo
     If $Path is a folder the paths of the files will be relative to $RelativeTo directory.
-    You have to add the $Relative parameter to use this parameter.
+    $Relative parameter must be added in order to use this parameter.
 #>
 function Get-FilesObject-InClassStructure
 (
