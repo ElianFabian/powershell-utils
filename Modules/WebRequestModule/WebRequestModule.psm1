@@ -11,14 +11,14 @@
     Gets all the file and folder links from a web page (like a VPS).
 
     .DESCRIPTION
-    This method is supposed to be used to download files and folders in Invoke-FilesFromUri
+    This method is supposed to be used to download files and folders in Download-FilesFromUri
     and to do so it's useful to know what is a folder and what is a file when we introduce a url
     it's going to be a folder which will contain more folders and files.
 
     .PARAMETER Uri
     The url of the web page.
 #>
-function Get-FileLinksFromUri([string] $Uri)
+function Invoke-FileLinksFromUri([string] $Uri)
 {
     # If the Uri doesn't ends with a slash then we add it because it's supposed to be a folder
     # and ending with and slash it's what we use to differentiate between folders and files.
@@ -47,11 +47,11 @@ function Get-FileLinksFromUri([string] $Uri)
 }
 
 
-# This is the prive version of Invoke-FilesFromUri, we have to define the other function in other to
+# This is the prive version of Download-FilesFromUri, we have to define the other function in other to
 # make the files be contained in the folder given in the Uri.
-function Invoke-FilesFromUri-Without-ContainingFolder([string] $Uri, [string] $Destination = ".\")
+function Download-FilesFromUri-WithoutContainingFolder([string] $Uri, [string] $Destination = ".\")
 {
-    $elements = Get-FileLinksFromUri -Uri $Uri
+    $elements = Invoke-FileLinksFromUri -Uri $Uri
 
     $elements | ForEach-Object {
 
@@ -65,7 +65,7 @@ function Invoke-FilesFromUri-Without-ContainingFolder([string] $Uri, [string] $D
 
             if ($Recurse)
             {
-                Invoke-FilesFromUri-Without-ContainingFolder "$Uri/$element_name/" "$Destination\$element_name\"
+                Download-FilesFromUri-WithoutContainingFolder "$Uri/$element_name/" "$Destination\$element_name\"
             }
         }
         else
@@ -93,7 +93,7 @@ function Invoke-FilesFromUri-Without-ContainingFolder([string] $Uri, [string] $D
     .PARAMETER Recurse
     If present it downloads all the files from every single folder recursively.
 #>
-function Invoke-FilesFromUri([string] $Uri, [string] $Destination = ".\", [switch] $Recurse)
+function Download-FilesFromUri([string] $Uri, [string] $Destination = ".\", [switch] $Recurse)
 {
     $uriArr = $Uri.Split("/")
     $rootFolderName = $uriArr[$uriArr.Length - 2]
@@ -102,7 +102,7 @@ function Invoke-FilesFromUri([string] $Uri, [string] $Destination = ".\", [switc
 
     New-Item -Path $Destination -ItemType Directory
 
-    Invoke-FilesFromUri-Without-ContainingFolder $Uri $Destination
+    Download-FilesFromUri-WithoutContainingFolder $Uri $Destination
 }
 
 
@@ -123,5 +123,5 @@ function Invoke-FileContentExpression([string] $Uri)
 
 
 Export-ModuleMember -Function `
-    Invoke-FilesFromUri,
+    Download-FilesFromUri,
     Invoke-FileContentExpression
