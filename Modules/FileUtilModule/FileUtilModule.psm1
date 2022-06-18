@@ -36,7 +36,7 @@ function ConvertTo-StringFileProperties([string] $PropertiesObject)
 #>
 function ConvertFrom-StringFileProperties([string] $Path)
 {
-    return Get-Content .\file.txt | ConvertFrom-StringData
+    return Get-Content $Path | ConvertFrom-StringData
 }
 
 
