@@ -42,8 +42,11 @@ function ConvertFrom-StringFileProperties([string] $Path)
 
 
 <#
+    .SYNOPSIS
+    Makes an empty copy of a directory structure.
+
     .DESCRIPTION
-    Copies the whole structure of a directory with the files, but empty (with 0 size).
+    Creates a copy of the whole structure of a directory with the files, but empty (with 0 size).
 
     .PARAMETER Path
     The path of the directory to copy.
