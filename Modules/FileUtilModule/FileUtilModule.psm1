@@ -54,6 +54,7 @@ function ConvertFrom-StringFileProperties([string] $Path)
 function Copy-FolderStructure-WithEmptyFiles([string] $Path, [string] $Destination)
 {
 	$pathName = (Get-Item $Path).Name
+
 	Get-ChildItem $Path -Directory -Recurse -Name | ForEach-Object { New-Item $Destination\$pathName\$_ -Type Directory }
     Get-ChildItem $Path -File      -Recurse -Name | ForEach-Object { New-Item $Destination\$pathName\$_ }
 }
