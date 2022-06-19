@@ -16,7 +16,7 @@
     If it's omitted then it gets the paths from the clipboard.
 
     .PARAMETER Recurse
-    If $Path is a folder then you can get all the files' path recursely.
+    If $Path is a folder then you can get all the files' path recursively.
 
     .PARAMETER Relative
     If $Path is a folder the paths of the files will be relative to $Path directory.
