@@ -39,7 +39,7 @@ function Invoke-FileLinksFromUri([string] $Uri, [switch] $Verbose)
 
         if ($currentLink.innerHTML -eq $currentLink.href) # The links we want satisfy this condition
         {
-            $linkList.Add("$Uri$($currentLink.innerHTML)")
+            $linkList.Add("$Uri$($currentLink.href)")
         }
     }
 
