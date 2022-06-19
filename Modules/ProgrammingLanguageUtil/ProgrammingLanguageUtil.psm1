@@ -171,7 +171,7 @@ function Get-ClassFields
     If $Path is a folder the paths of the files will be relative to $RelativeTo directory.
     $Relative parameter must be added in order to use this parameter.
 #>
-function Get-FilesObject-InClassStructure
+function Get-ClassStructure-FromFilesObject
 (
     [string]       $Path,
     [string]       $FieldType    = "String",
@@ -239,4 +239,4 @@ function Get-FilesObject-InClassStructure
 Export-ModuleMember `
     -Function `
         Get-FilesObject-GroupBy-Extension,
-        Get-FilesObject-InClassStructure
+        Get-ClassStructure-FromFilesObject
