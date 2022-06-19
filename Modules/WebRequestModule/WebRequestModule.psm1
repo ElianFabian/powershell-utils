@@ -16,12 +16,12 @@
     it's going to be a folder which will contain more folders and files.
 
     .PARAMETER Uri
-    The url of the web page.
+    The URI of the web page.
 #>
 function Invoke-FileLinksFromUri([string] $Uri)
 {
-    # If the Uri doesn't ends with a slash then we add it because it's supposed to be a folder
-    # and ending with and slash it's what we use to differentiate between folders and files.
+    # If the Uri doesn't ends with a slash then we add it because it's supposed to be a folder,
+    # ending with a slash it's what we use to differentiate between files and folders.
     if (-Not $Uri.EndsWith("/"))
     {
         $Uri += "/"
@@ -45,7 +45,6 @@ function Invoke-FileLinksFromUri([string] $Uri)
 
 	return $elements
 }
-
 
 # This is the prive version of Download-FilesFromUri, we have to define the other function in other to
 # make the files be contained in the folder given in the Uri.
@@ -85,7 +84,7 @@ function Download-FilesFromUri-WithoutContainingFolder([string] $Uri, [string] $
     Downloads all the files and folders from a url inside the folder they are contained in a web page (for example a VPS).
 
     .PARAMETER Uri
-    The url of the web page.
+    The URI of the web page.
 
     .PARAMETER Destination
     The destination folder where the files will be downloaded, by default it's the current folder.
@@ -113,7 +112,7 @@ function Download-FilesFromUri([string] $Uri, [string] $Destination = ".\", [swi
     To use this function you have to dot source it (insert a dot at the beginning of the function call).
 
     .PARAMETER Uri
-    The url of the web page.
+    The URI of the web page.
 #>
 function Invoke-FileContentExpression([string] $Uri)
 {
