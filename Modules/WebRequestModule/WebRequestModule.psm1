@@ -52,11 +52,11 @@ function Download-FilesFromUri-WithoutContainingFolder([string] $Uri, [string] $
 {
     $links = Invoke-FileLinksFromUri -Uri $Uri -Verbose:$Verbose
 
-    $links | ForEach-Object {
+    foreach($link in $links)
+    {
+        $splittedLink = $link.Split("/")
 
-        $splittedLink = $_.Split("/")
-
-        $isFolder = $_.EndsWith("/")
+        $isFolder = $link.EndsWith("/")
 
         if ($isFolder)
         {
@@ -66,14 +66,25 @@ function Download-FilesFromUri-WithoutContainingFolder([string] $Uri, [string] $
 
             if ($Recurse)
             {
-                Download-FilesFromUri-WithoutContainingFolder -Uri "$Uri$folderName/" -Destination "$Destination\$folderName\" -Recurse:$Recurse -Verbose:$Verbose
+                try
+                {
+                    Download-FilesFromUri-WithoutContainingFolder -Uri "$Uri$folderName/" -Destination "$Destination\$folderName\" -Recurse:$Recurse -Verbose:$Verbose
+                }
+                catch
+                { 
+                    Write-Warning "The file '$Uri$folderName' has no extension, this function can't download files with no extension."
+
+                    Remove-Item -Path "$Destination\$folderName\"
+
+                    continue
+                }
             }
         }
         else
         {
             $fileName = $splittedLink[$splittedLink.Length - 1]
 
-            Invoke-WebRequest -Uri $_ -OutFile "$Destination\$fileName" -Verbose:$Verbose
+            Invoke-WebRequest -Uri $link -OutFile "$Destination\$fileName" -Verbose:$Verbose
         }
     }
 }
@@ -84,6 +95,8 @@ function Download-FilesFromUri-WithoutContainingFolder([string] $Uri, [string] $
 
     .DESCRIPTION
     Downloads all the files and folders from a url inside the folder they are contained in a web page (for example a VPS).
+
+    WARNING: can't download files with no extension.
 
     .PARAMETER Uri
     The URI of the web page.
