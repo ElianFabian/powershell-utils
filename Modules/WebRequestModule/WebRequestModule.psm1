@@ -50,28 +50,30 @@ function Invoke-FileLinksFromUri([string] $Uri)
 # make the files be contained in the folder given in the Uri.
 function Download-FilesFromUri-WithoutContainingFolder([string] $Uri, [string] $Destination = ".\")
 {
-    $elements = Invoke-FileLinksFromUri -Uri $Uri
+    $links = Invoke-FileLinksFromUri -Uri $Uri
 
-    $elements | ForEach-Object {
+    $links | ForEach-Object {
 
-        $element_arr = $_.Split("/")
+        $splittedLink = $_.Split("/")
 
-        if ($_.EndsWith("/"))
+        $isFolder = $_.EndsWith("/")
+
+        if ($isFolder)
         {
-            $element_name = $element_arr[$element_arr.Length - 2]
+            $folderName = $splittedLink[$splittedLink.Length - 2]
 
-            New-Item -Path "$Destination\$element_name\" -ItemType Directory
+            New-Item -Path "$Destination\$folderName\" -ItemType Directory
 
             if ($Recurse)
             {
-                Download-FilesFromUri-WithoutContainingFolder "$Uri/$element_name/" "$Destination\$element_name\"
+                Download-FilesFromUri-WithoutContainingFolder -Uri "$Uri/$folderName/" -Destination "$Destination\$folderName\"
             }
         }
         else
         {
-            $element_name = $element_arr[$element_arr.Length - 1]
+            $fileName = $splittedLink[$splittedLink.Length - 1]
 
-            Invoke-WebRequest -Uri $_ -OutFile "$Destination$element_name"
+            Invoke-WebRequest -Uri $_ -OutFile "$Destination\$fileName"
         }
     }
 }
