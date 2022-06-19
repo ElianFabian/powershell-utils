@@ -18,7 +18,7 @@
     .PARAMETER Uri
     The URI of the web page.
 #>
-function Invoke-FileLinksFromUri([string] $Uri)
+function Invoke-FileLinksFromUri([string] $Uri, [switch] $Verbose)
 {
     # If the Uri doesn't ends with a slash then we add it because it's supposed to be a folder,
     # ending with a slash it's what we use to differentiate between files and folders.
@@ -27,30 +27,30 @@ function Invoke-FileLinksFromUri([string] $Uri)
         $Uri += "/"
     }
 
-    $webResponse = Invoke-WebRequest -Uri $Uri
+    $allLinksFromWebResponse = Invoke-WebRequest -Uri $Uri -Verbose:$Verbose
 
-    $elements = New-Object Collections.Generic.List[String]
+    $linkList = New-Object Collections.Generic.List[String]
 
-    $nElements = $webResponse.Links.Count
+    $linkCount = $allLinksFromWebResponse.Links.Count
 
-    0..($nElements - 1) | ForEach-Object {
+    0..($linkCount - 1) | ForEach-Object {
 
-        $item = $webResponse.Links.Item($_)
+        $currentLink = $allLinksFromWebResponse.Links.Item($_)
 
-        if ($item.innerHTML -eq $item.href) # The links we want satisfy this condition
+        if ($currentLink.innerHTML -eq $currentLink.href) # The links we want satisfy this condition
         {
-            $elements.Add("$Uri$($item.innerHTML)")
+            $linkList.Add("$Uri$($currentLink.innerHTML)")
         }
     }
 
-	return $elements
+	return $linkList
 }
 
 # This is the prive version of Download-FilesFromUri, we have to define the other function in other to
 # make the files be contained in the folder given in the Uri.
-function Download-FilesFromUri-WithoutContainingFolder([string] $Uri, [string] $Destination = ".\")
+function Download-FilesFromUri-WithoutContainingFolder([string] $Uri, [string] $Destination = ".\", [switch] $Recurse , [switch] $Verbose)
 {
-    $links = Invoke-FileLinksFromUri -Uri $Uri
+    $links = Invoke-FileLinksFromUri -Uri $Uri -Verbose:$Verbose
 
     $links | ForEach-Object {
 
@@ -66,14 +66,14 @@ function Download-FilesFromUri-WithoutContainingFolder([string] $Uri, [string] $
 
             if ($Recurse)
             {
-                Download-FilesFromUri-WithoutContainingFolder -Uri "$Uri/$folderName/" -Destination "$Destination\$folderName\"
+                Download-FilesFromUri-WithoutContainingFolder -Uri "$Uri$folderName/" -Destination "$Destination\$folderName\" -Recurse:$Recurse -Verbose:$Verbose
             }
         }
         else
         {
             $fileName = $splittedLink[$splittedLink.Length - 1]
 
-            Invoke-WebRequest -Uri $_ -OutFile "$Destination\$fileName"
+            Invoke-WebRequest -Uri $_ -OutFile "$Destination\$fileName" -Verbose:$Verbose
         }
     }
 }
@@ -94,16 +94,16 @@ function Download-FilesFromUri-WithoutContainingFolder([string] $Uri, [string] $
     .PARAMETER Recurse
     If present it downloads all the files from every single folder recursively.
 #>
-function Download-FilesFromUri([string] $Uri, [string] $Destination = ".\", [switch] $Recurse)
+function Download-FilesFromUri([string] $Uri, [string] $Destination = ".\", [switch] $Recurse, [switch] $Verbose)
 {
-    $uriArr = $Uri.Split("/")
-    $rootFolderName = $uriArr[$uriArr.Length - 2]
+    $spllitedUri = $Uri.Split("/")
+    $rootFolderName = $spllitedUri[$spllitedUri.Length - 2]
 
     $Destination += "$rootFolderName\"
 
     New-Item -Path $Destination -ItemType Directory
 
-    Download-FilesFromUri-WithoutContainingFolder $Uri $Destination
+    Download-FilesFromUri-WithoutContainingFolder -Uri $Uri -Destination $Destination -Recurse:$Recurse -Verbose:$Verbose
 }
 
 
