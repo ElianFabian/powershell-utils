@@ -72,9 +72,13 @@ function Download-FilesFromUri-WithoutContainingFolder([string] $Uri, [string] $
                 }
                 catch
                 { 
-                    Write-Warning "The file '$Uri$folderName' has no extension, this function can't download files with no extension."
+                    Write-Warning "The file '$Uri$folderName' has no extension."
 
                     Remove-Item -Path "$Destination\$folderName\"
+
+                    $fileName = $folderName
+
+                    Invoke-WebRequest -Uri $link -OutFile "$Destination\$fileName" -Verbose:$Verbose
 
                     continue
                 }
