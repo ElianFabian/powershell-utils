@@ -100,8 +100,6 @@ function Download-FilesFromUri-WithoutContainingFolder([string] $Uri, [string] $
     .DESCRIPTION
     Downloads all the files and folders from a url inside the folder they are contained in a web page (for example a VPS).
 
-    WARNING: can't download files with no extension.
-
     .PARAMETER Uri
     The URI of the web page.
 
