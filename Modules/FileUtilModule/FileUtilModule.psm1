@@ -13,13 +13,13 @@
     .PARAMETER PropertiesObject
     The object to convert into a string in properties file format.
 #>
-function ConvertTo-StringFileProperties([string] $PropertiesObject)
+function ConvertTo-StringFileProperties([string] $InputObject)
 {
     $strProperties = ""
 
-    foreach ($key in $PropertiesObject.Keys)
+    foreach ($key in $InputObject.Keys)
     {
-        $value = $PropertiesObject.$key
+        $value = $InputObject.$key
 
         $strProperties += "$key=$value`n"
     }
