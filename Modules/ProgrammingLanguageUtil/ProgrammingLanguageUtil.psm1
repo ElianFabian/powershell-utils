@@ -110,7 +110,7 @@ function Get-FilesObject-GroupBy-Extension
 
 function Get-ClassFields
 (
-    [System.Object] $Items,
+    [System.Object] $InputObject,
     [string]        $CurrentTab,
     [int]           $FieldTabSize,
     [string]        $Type
@@ -120,7 +120,7 @@ function Get-ClassFields
 
     $fieldTab = $CurrentTab * $FieldTabSize
 
-	foreach($filePath in $Items.GetEnumerator())
+	foreach($filePath in $InputObject.GetEnumerator())
 	{
 		$field = $filePath.Key
 		$value = "`"$($filePath.Value.Replace("\", "/"))`""
@@ -140,8 +140,6 @@ function Get-ClassFields
 
 	return $body
 }
-
-##### WARNING: this function doesn't yet work well when mixing files with extensions and files without extensions #####
 
 <#
     .DESCRIPTION
@@ -216,14 +214,14 @@ function Get-ClassStructure-FromFilesObject
             }
             $body += "`n$tab{`n"
 
-            $body += Get-ClassFields -Items $ext.Value -CurrentTab $tab -FieldTabSize 2 -Type $FieldType
+            $body += Get-ClassFields -InputObject $ext.Value -CurrentTab $tab -FieldTabSize 2 -Type $FieldType
 
             $body += "$tab}`n"
         }
     }
     else # If not we only have fields inside the class
     {
-        $body = Get-ClassFields -Items $filesObject -CurrentTab $tab -FieldTabSize 1 -Type $FieldType
+        $body = Get-ClassFields -InputObject $filesObject -CurrentTab $tab -FieldTabSize 1 -Type $FieldType
     }
 
     $body      = $body.Substring(0, $body.Length - 1) # Deletes the final escape character
