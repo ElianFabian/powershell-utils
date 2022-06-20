@@ -10,10 +10,10 @@
     .DESCRIPTION
     Converts an object into a string in properties file format.
 
-    .PARAMETER PropertiesObject
+    .PARAMETER InputObject
     The object to convert into a string in properties file format.
 #>
-function ConvertTo-StringFileProperties([string] $InputObject)
+function ConvertTo-FileProperties([string] $InputObject)
 {
     $strProperties = ""
 
@@ -65,6 +65,6 @@ function Copy-FolderStructure-WithEmptyFiles([string] $Path, [string] $Destinati
 
 
 Export-ModuleMember -Function `
-    ConvertTo-StringFileProperties,
+    ConvertTo-FileProperties,
     ConvertFrom-StringFileProperties,
     Copy-FolderStructure-WithEmptyFiles
