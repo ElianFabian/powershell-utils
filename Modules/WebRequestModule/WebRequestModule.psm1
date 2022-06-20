@@ -70,7 +70,7 @@ function Get-FilesFromUri-WithoutContainingFolder([string] $Uri, [string] $Desti
                 {
                     Get-FilesFromUri-WithoutContainingFolder -Uri "$Uri$folderName/" -Destination "$Destination\$folderName\" -Recurse:$Recurse -Verbose:$Verbose
                 }
-                catch
+                catch # This will be thrown if a file has no extension
                 { 
                     Write-Warning "The file '$Uri$folderName' has no extension."
 
