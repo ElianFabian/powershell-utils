@@ -111,8 +111,8 @@ function Get-FilesFromUri-WithoutContainingFolder([string] $Uri, [string] $Desti
 #>
 function Get-FilesFromUri([string] $Uri, [string] $Destination = ".\", [switch] $Recurse, [switch] $Verbose)
 {
-    $spllitedUri = $Uri.Split("/")
-    $rootFolderName = $spllitedUri[$spllitedUri.Length - 2]
+    $splittedUri = $Uri.Split("/")
+    $rootFolderName = $splittedUri[$splittedUri.Length - 2]
 
     $Destination += "$rootFolderName\"
 
