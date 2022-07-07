@@ -71,12 +71,12 @@ function Get-FilesFromUri-WithoutContainingFolder([string] $Uri, [string] $Desti
                     Get-FilesFromUri-WithoutContainingFolder -Uri "$Uri$folderName/" -Destination "$Destination\$folderName\" -Recurse:$Recurse -Verbose:$Verbose
                 }
                 catch # This will be thrown if a file has no extension
-                { 
-                    Write-Warning "The file '$Uri$folderName' has no extension."
-
-                    Remove-Item -Path "$Destination\$folderName\"
-
+                {
                     $fileName = $folderName
+
+                    Write-Warning "The file '$Uri$fileName' has no extension."
+
+                    Remove-Item -Path "$Destination\$fileName\"
 
                     Invoke-WebRequest -Uri $link -OutFile "$Destination\$fileName" -Verbose:$Verbose
 
@@ -111,7 +111,7 @@ function Get-FilesFromUri-WithoutContainingFolder([string] $Uri, [string] $Desti
 #>
 function Get-FilesFromUri([string] $Uri, [string] $Destination = ".\", [switch] $Recurse, [switch] $Verbose)
 {
-    $splittedUri = $Uri.Split("/")
+    $splittedUri    = $Uri.Split("/")
     $rootFolderName = $splittedUri[$splittedUri.Length - 2]
 
     $Destination += "$rootFolderName\"
