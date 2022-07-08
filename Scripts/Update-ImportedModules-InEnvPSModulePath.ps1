@@ -6,5 +6,5 @@
 
 
 
-& .\Remove-OnlyImportedModules-InEnvPSModulePath.ps1
+& .\Remove-ImportedModules-InEnvPSModulePath.ps1
 & .\Copy-Modules-IntoEnvPSModulePath.ps1
