@@ -37,7 +37,7 @@ function ConvertTo-CamelCase
 
     end
     {
-        $text = [regex]::replace($InputObject, "($BaseCaseSeparator)(.)", { $args[0].Groups[2].Value.ToUpper()})
+        $text = [regex]::replace($InputObject, "($BaseCaseSeparator)(.)", { $args[0].Groups[2].Value.ToUpper() })
 
         $firstChar = $text[0].ToString().ToLower()
 
