@@ -16,3 +16,13 @@ enum LanguageType
     Java;
     Kotlin
 }
+
+enum CaseType
+{
+    CamelCase;      # camelCase
+    PascalCase;     # PascalCase
+    SnakeCase;      # snake_case
+	UpperSnakeCase; # SNAKE_CASE
+	KebabCase;      # kebab-case
+	TrainCase;      # Train-Case
+}
