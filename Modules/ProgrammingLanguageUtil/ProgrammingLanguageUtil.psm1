@@ -60,11 +60,12 @@ function Get-FilesObject-GroupBy-Extension
         $filePaths = Get-Content $Path
     }
 
-    $filePaths | ForEach-Object {
-        # $_ = "things\txtFiles\this is-my_text.file.txt" (This is for visual help. It's an example of the worst filename case)
+    foreach ($filePath in $filePaths)
+    {
+        # $filePath = "things\txtFiles\this is-my_text.file.txt" (This is for visual help. It's an example of the worst filename case)
 
-        $itemArray    = $_.Split("/\") # ["things", "txtFiles", "this is-my_text.file.txt"]
-        $itemFullName = $itemArray[-1] # "this is-my_text.file.txt"
+        $itemArray    = $filePath.Split("/\") # ["things", "txtFiles", "this is-my_text.file.txt"]
+        $itemFullName = $itemArray[-1]        # "this is-my_text.file.txt"
 
         # This is in case you want to put just a list of strings in a file and just get an object with atributes and values without any kind of group
         if ($itemFullName.Contains("."))
@@ -97,11 +98,11 @@ function Get-FilesObject-GroupBy-Extension
             }
 
             # Adds the file name in the corresponding extension with its value
-            $filesObject.$itemExtension.$itemName = $_ # $filesObject.txt.textFile = "things\txtFiles\this is-my_text.file.txt"
+            $filesObject.$itemExtension.$itemName = $filePath # $filesObject.txt.textFile = "things\txtFiles\this is-my_text.file.txt"
         }
         else
         {
-            $filesObject.$itemName = $_ # $filesObject.textFile = "things\txtFiles\this is-my_text.file.txt"
+            $filesObject.$itemName = $filePath # $filesObject.textFile = "things\txtFiles\this is-my_text.file.txt"
         }
     }
 
