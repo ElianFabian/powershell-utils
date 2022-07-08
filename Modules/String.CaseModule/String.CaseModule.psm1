@@ -1,11 +1,8 @@
-# StringModule.psm1
+# String.CaseModule.psm1
 
 
 
 # From repository: https://github.com/ElianFabian/powershell-utils
-
-
-Import-Module -Name EnumModule
 
 
 
