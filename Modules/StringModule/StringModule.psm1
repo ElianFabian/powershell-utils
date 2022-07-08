@@ -11,6 +11,9 @@
 
 #region Case Functions
 
+$BaseCaseSeparator = "&"
+
+
 function ConvertFrom-CamelCase
 {
     [CmdletBinding()]
@@ -19,7 +22,7 @@ function ConvertFrom-CamelCase
         [string] $InputObject
     )
 
-    end { [regex]::replace($InputObject, '(?<=.)(?=[A-Z])', '&').ToLower() }
+    end { [regex]::replace($InputObject, '(?<=.)(?=[A-Z])', $BaseCaseSeparator).ToLower() }
 }
 
 function ConvertTo-CamelCase
@@ -30,7 +33,7 @@ function ConvertTo-CamelCase
         [string] $InputObject
     )
 
-    end { [regex]::replace($InputObject.ToLower(), '(&)(.)', { $args[0].Groups[2].Value.ToUpper()}) }
+    end { [regex]::replace($InputObject.ToLower(), "($BaseCaseSeparator)(.)", { $args[0].Groups[2].Value.ToUpper()}) }
 }
 
 function ConvertFrom-PascalCase
@@ -52,7 +55,7 @@ function ConvertTo-PascalCase
         [string] $InputObject
     )
 
-    end { [regex]::replace( $InputObject.ToLower(), '(^|&)(.)', { $args[0].Groups[2].Value.ToUpper() } ) }
+    end { [regex]::replace( $InputObject.ToLower(), "(^|$BaseCaseSeparator)(.)", { $args[0].Groups[2].Value.ToUpper() } ) }
 }
 
 function ConvertFrom-SnakeCase
@@ -63,7 +66,7 @@ function ConvertFrom-SnakeCase
         [string] $InputObject
     )
 
-    end { $InputObject.Replace("_", "&") }
+    end { $InputObject.Replace("_", $BaseCaseSeparator) }
 }
 
 function ConvertTo-SnakeCase
@@ -74,7 +77,7 @@ function ConvertTo-SnakeCase
         [string] $InputObject
     )
 
-    end { $InputObject.Replace("&", "_") }
+    end { $InputObject.Replace($BaseCaseSeparator, "_") }
 }
 
 function ConvertFrom-UpperSnakeCase
@@ -107,7 +110,7 @@ function ConvertFrom-KebabCase
         [string] $InputObject
     )
 
-    end { $InputObject.Replace("-", "&") }
+    end { $InputObject.Replace("-", $BaseCaseSeparator) }
 }
 
 function ConvertTo-KebabCase
@@ -118,7 +121,7 @@ function ConvertTo-KebabCase
         [string] $InputObject
     )
 
-    end { $InputObject.Replace("&", "-") }
+    end { $InputObject.Replace($BaseCaseSeparator, "-") }
 }
 
 function ConvertFrom-TrainCase
@@ -129,7 +132,7 @@ function ConvertFrom-TrainCase
         [string] $InputObject
     )
 
-    end { $InputObject.Replace("-", "").ToLower() }
+    end { $InputObject.Replace("-", $BaseCaseSeparator).ToLower() }
 }
 
 function ConvertTo-TrainCase
@@ -140,7 +143,7 @@ function ConvertTo-TrainCase
         [string] $InputObject
     )
 
-    end { [regex]::replace( $InputObject.ToLower(), '(^|&)(.)', { "-" + $args[0].Groups[2].Value.ToUpper()} ).Remove(0, 1) }
+    end { [regex]::replace( $InputObject.ToLower(), "(^|$BaseCaseSeparator)(.)", { "-" + $args[0].Groups[2].Value.ToUpper()} ).Remove(0, 1) }
 }
 
 #endregion
