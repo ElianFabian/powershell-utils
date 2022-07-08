@@ -27,7 +27,7 @@
 #>
 function Get-FilesObject-GroupBy-Extension
 (
-    [string] $Path,
+    [string] $Path       = ".",
     [switch] $Recurse,
     [switch] $Relative,
     [string] $RelativeTo = "."
@@ -171,7 +171,7 @@ function Get-ClassFields
 #>
 function Get-ClassStructure-FromFilesObject
 (
-    [string]       $Path,
+    [string]       $Path         = ".",
     [string]       $FieldType    = "String",
     [LanguageType] $LanguageType = [LanguageType]::CSharp,
     [int]          $TabSize      = 4,
