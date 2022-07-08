@@ -164,7 +164,7 @@ function ConvertTo-TrainCase
         [string] $InputObject
     )
 
-    end { [regex]::replace( $InputObject, "(^|$BaseCaseSeparator)(.)", { "-" + $args[0].Groups[2].Value.ToUpper()} ).Remove(0, 1) }
+    end { [regex]::replace( $InputObject, "(^|$BaseCaseSeparator)(.)", { "-$($args[0].Groups[2].Value.ToUpper())" } ).Remove(0, 1) }
 }
 
 #endregion
