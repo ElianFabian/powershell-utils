@@ -11,6 +11,17 @@
 
 #region Case Functions
 
+function ConvertFrom-CamelCase
+{
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromPipeline = $true)]
+        [string] $InputObject
+    )
+
+    end { [regex]::replace($InputObject, '(?<=.)(?=[A-Z])', '&').ToLower() }
+}
+
 function ConvertTo-CamelCase
 {
     [CmdletBinding()]
@@ -22,7 +33,7 @@ function ConvertTo-CamelCase
     end { [regex]::replace($InputObject.ToLower(), '(&)(.)', { $args[0].Groups[2].Value.ToUpper()}) }
 }
 
-filter ConvertFrom-CamelCase
+function ConvertFrom-PascalCase
 {
     [CmdletBinding()]
     param(
@@ -30,7 +41,7 @@ filter ConvertFrom-CamelCase
         [string] $InputObject
     )
 
-    end { [regex]::replace($InputObject, '(?<=.)(?=[A-Z])', '&').ToLower() }
+    end { $InputObject | ConvertFrom-CamelCase }
 }
 
 function ConvertTo-PascalCase
@@ -44,7 +55,7 @@ function ConvertTo-PascalCase
     end { [regex]::replace( $InputObject.ToLower(), '(^|&)(.)', { $args[0].Groups[2].Value.ToUpper() } ) }
 }
 
-filter ConvertFrom-PascalCase
+function ConvertFrom-SnakeCase
 {
     [CmdletBinding()]
     param(
@@ -52,7 +63,7 @@ filter ConvertFrom-PascalCase
         [string] $InputObject
     )
 
-    end { $InputObject | ConvertFrom-CamelCase }
+    end { $InputObject.Replace("_", "&") }
 }
 
 function ConvertTo-SnakeCase
@@ -66,7 +77,7 @@ function ConvertTo-SnakeCase
     end { $InputObject.Replace("&", "_") }
 }
 
-filter ConvertFrom-SnakeCase
+function ConvertFrom-UpperSnakeCase
 {
     [CmdletBinding()]
     param(
@@ -74,7 +85,7 @@ filter ConvertFrom-SnakeCase
         [string] $InputObject
     )
 
-    end { $InputObject.Replace("_", "&") }
+    end { $InputObject.ToLower() | ConvertFrom-SnakeCase }
 }
 
 function ConvertTo-UpperSnakeCase
@@ -88,7 +99,7 @@ function ConvertTo-UpperSnakeCase
     end { $InputObject.ToUpper() | ConvertTo-SnakeCase }
 }
 
-filter ConvertFrom-UpperSnakeCase
+function ConvertFrom-KebabCase
 {
     [CmdletBinding()]
     param(
@@ -96,7 +107,7 @@ filter ConvertFrom-UpperSnakeCase
         [string] $InputObject
     )
 
-    end { $InputObject.ToLower() | ConvertFrom-SnakeCase }
+    end { $InputObject.Replace("-", "&") }
 }
 
 function ConvertTo-KebabCase
@@ -110,7 +121,7 @@ function ConvertTo-KebabCase
     end { $InputObject.Replace("&", "-") }
 }
 
-filter ConvertFrom-KebabCase
+function ConvertFrom-TrainCase
 {
     [CmdletBinding()]
     param(
@@ -118,7 +129,7 @@ filter ConvertFrom-KebabCase
         [string] $InputObject
     )
 
-    end { $InputObject.Replace("-", "&") }
+    end { $InputObject.Replace("-", "").ToLower() }
 }
 
 function ConvertTo-TrainCase
@@ -132,40 +143,13 @@ function ConvertTo-TrainCase
     end { [regex]::replace( $InputObject.ToLower(), '(^|&)(.)', { "-" + $args[0].Groups[2].Value.ToUpper()} ).Remove(0, 1) }
 }
 
-filter ConvertFrom-TrainCase
-{
-    [CmdletBinding()]
-    param(
-        [Parameter(ValueFromPipeline = $true)]
-        [string] $InputObject
-    )
-
-    end { $InputObject.Replace("-", "").ToLower() }
-}
-
 #endregion
 
-$convertTo = @{
-    CamelCase      = 'ConvertTo-CamelCase';
-    PascalCase     = 'ConvertTo-PascalCase';
-    SnakeCase      = 'ConvertTo-SnakeCase';
-    UpperSnakeCase = 'ConvertTo-UpperSnakeCase';
-    KebabCase      = 'ConvertTo-KebabCase';
-    TrainCase      = 'ConvertTo-TrainCase';
-}
 
-$convertFrom = @{
-    CamelCase      = 'ConvertFrom-CamelCase';
-    PascalCase     = 'ConvertFrom-PascalCase';
-    SnakeCase      = 'ConvertFrom-SnakeCase';
-    UpperSnakeCase = 'ConvertFrom-UpperSnakeCase';
-    KebabCase      = 'ConvertFrom-KebabCase';
-    TrainCase      = 'ConvertFrom-TrainCase';
-}
 
 function Set-Case([string] $InputObject, [CaseType] $From, [CaseType] $To)
 {
-    Invoke-Expression "'$InputObject' | & $($convertFrom[$From.ToString()]) | & $($convertTo[$To.ToString()])"
+    Invoke-Expression "'$InputObject' | ConvertFrom-$From | ConvertTo-$To"
 }
 
 
