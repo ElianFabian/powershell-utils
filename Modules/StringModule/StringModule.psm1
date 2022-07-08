@@ -14,6 +14,7 @@
 $BaseCaseSeparator = "&"
 
 
+# This function is so versatile, but it's slow.
 function ConvertFrom-CamelCase
 {
     [CmdletBinding()]
