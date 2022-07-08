@@ -40,7 +40,7 @@ function Set-Case([string] $InputObject, [CaseType] $From, [CaseType] $To)
         "KebabCase-PascalCase"     { From-SnakeCase-To-PascalCase $InputObject.Replace("-", "_") }
         "KebabCase-SnakeCase"      {                              $InputObject.Replace("-", "_") }
         "KebabCase-UpperSnakeCase" {                              $InputObject.Replace("-", "_").ToUpper() }
-        "KebabCase-TrainCase"      { From-SnakeCase-To-TrainCase $InputObject.Replace("-", "_") }
+        "KebabCase-TrainCase"      { From-SnakeCase-To-TrainCase  $InputObject.Replace("-", "_") }
 
         "TrainCase-CamelCase"      { From-PascalCase-To-CamelCase $InputObject.Replace("-", "") }
         "TrainCase-PascalCase"     {                              $InputObject.Replace("-", "") }
