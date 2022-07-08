@@ -91,7 +91,7 @@ function Get-FilesObject-GroupBy-Extension
         if ($itemFullName.Contains("."))
         {
             # If the extension doesn't exist in the object then we create it
-            if (-Not $filesObject.Contains($itemExtension))
+            if (-not $filesObject.Contains($itemExtension))
             {
                 $filesObject.$itemExtension = @{}
             }
@@ -224,7 +224,7 @@ function Get-ClassStructure-FromFilesObject
         $body = Get-ClassFields -InputObject $filesObject -CurrentTab $tab -FieldTabSize 1 -Type $FieldType
     }
 
-    $body      = $body.Substring(0, $body.Length - 1) # Deletes the final escape character
+    $body = $body.Substring(0, $body.Length - 1) # Deletes the final escape character
 
     $strFiles += "$body`n"
     $strFiles += "}"
