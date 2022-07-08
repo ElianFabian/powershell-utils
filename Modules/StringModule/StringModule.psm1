@@ -130,6 +130,8 @@ function From-SnakeCase-To-TrainCase([string] $InputObject)
     return $toTrainCase
 }
 
+#endregion
+
 
 
 Export-ModuleMember -Function `
