@@ -9,10 +9,11 @@
 # We have a base case from which we're going to convert from and convert to.
 # Base case: something&and&something&else
 
-#region Case Functions
 
 $BaseCaseSeparator = "&"
 
+
+#region Case Functions
 
 # This function is so versatile, but it's slow.
 function ConvertFrom-CamelCase
