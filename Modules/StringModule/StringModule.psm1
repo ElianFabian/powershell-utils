@@ -5,6 +5,9 @@
 # From repository: https://github.com/ElianFabian/powershell-utils
 
 
+Import-Module -Name EnumModule
+
+
 
 # We have a base case from which we're going to convert from and convert to.
 # Base case: something&and&something&else
@@ -171,6 +174,17 @@ function ConvertTo-TrainCase
 
 #endregion
 
+$caseTypeNames = [CaseType].GetEnumNames()
+
+$fromFunctions = New-Object System.Collections.Generic.Dictionary'[string, string]'
+$toFunctions   = New-Object System.Collections.Generic.Dictionary'[string, string]'
+
+foreach ($caseType in $caseTypeNames)
+{
+    $fromFunctions.Add($caseType, "ConvertFrom-$caseType")
+    $toFunctions.Add($caseType, "ConvertTo-$caseType")
+}
+
 
 
 function Set-Case
@@ -181,10 +195,9 @@ function Set-Case
         [CaseType] $From, [CaseType] $To
     )
 
-    process { Invoke-Expression "'$InputObject' | ConvertFrom-$From | ConvertTo-$To" }
+    process { & $toFunctions[$To.ToString()] (& $fromFunctions[$From.ToString()] $InputObject) }
 }
 
 
-
-Export-ModuleMember -Function `
-    Set-Case
+Export-ModuleMember `
+    -Function Set-Case
