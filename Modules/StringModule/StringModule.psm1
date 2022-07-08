@@ -33,7 +33,14 @@ function ConvertTo-CamelCase
         [string] $InputObject
     )
 
-    end { [regex]::replace($InputObject.ToLower(), "($BaseCaseSeparator)(.)", { $args[0].Groups[2].Value.ToUpper()}) }
+    end
+    {
+        $text = [regex]::replace($InputObject, "($BaseCaseSeparator)(.)", { $args[0].Groups[2].Value.ToUpper()})
+
+        $firstChar = $text[0].ToString().ToLower()
+
+        return $text.Remove(0, 1).Insert(0, $firstChar)
+    }
 }
 
 function ConvertFrom-PascalCase
@@ -55,7 +62,7 @@ function ConvertTo-PascalCase
         [string] $InputObject
     )
 
-    end { [regex]::replace( $InputObject.ToLower(), "(^|$BaseCaseSeparator)(.)", { $args[0].Groups[2].Value.ToUpper() } ) }
+    end { [regex]::replace( $InputObject, "(^|$BaseCaseSeparator)(.)", { $args[0].Groups[2].Value.ToUpper() } ) }
 }
 
 function ConvertFrom-SnakeCase
@@ -77,7 +84,14 @@ function ConvertTo-SnakeCase
         [string] $InputObject
     )
 
-    end { $InputObject.Replace($BaseCaseSeparator, "_") }
+    end
+    {
+        $text = $InputObject.Replace($BaseCaseSeparator, "_")
+
+        $firstChar = $text[0].ToString().ToLower()
+
+        return $text.Remove(0, 1).Insert(0, $firstChar)
+    }
 }
 
 function ConvertFrom-UpperSnakeCase
@@ -121,7 +135,14 @@ function ConvertTo-KebabCase
         [string] $InputObject
     )
 
-    end { $InputObject.Replace($BaseCaseSeparator, "-") }
+    end
+    {
+        $text = $InputObject.Replace($BaseCaseSeparator, "-")
+
+        $firstChar = $text[0].ToString().ToLower()
+
+        return $text.Remove(0, 1).Insert(0, $firstChar)
+    }
 }
 
 function ConvertFrom-TrainCase
@@ -132,7 +153,7 @@ function ConvertFrom-TrainCase
         [string] $InputObject
     )
 
-    end { $InputObject.Replace("-", $BaseCaseSeparator).ToLower() }
+    end { $InputObject.Replace("-", $BaseCaseSeparator) }
 }
 
 function ConvertTo-TrainCase
@@ -143,16 +164,22 @@ function ConvertTo-TrainCase
         [string] $InputObject
     )
 
-    end { [regex]::replace( $InputObject.ToLower(), "(^|$BaseCaseSeparator)(.)", { "-" + $args[0].Groups[2].Value.ToUpper()} ).Remove(0, 1) }
+    end { [regex]::replace( $InputObject, "(^|$BaseCaseSeparator)(.)", { "-" + $args[0].Groups[2].Value.ToUpper()} ).Remove(0, 1) }
 }
 
 #endregion
 
 
 
-function Set-Case([string] $InputObject, [CaseType] $From, [CaseType] $To)
+function Set-Case
 {
-    Invoke-Expression "'$InputObject' | ConvertFrom-$From | ConvertTo-$To"
+    param(
+        [Parameter(ValueFromPipeline = $true)]
+        [string] $InputObject,
+        [CaseType] $From, [CaseType] $To
+    )
+
+    process { Invoke-Expression "'$InputObject' | ConvertFrom-$From | ConvertTo-$To" }
 }
 
 
