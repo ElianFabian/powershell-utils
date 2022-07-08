@@ -69,39 +69,39 @@ function Get-FilesObject-GroupBy-Extension
         # This is in case you want to put just a list of strings in a file and just get an object with atributes and values without any kind of group
         if ($itemFullName.Contains("."))
         {
-            $itemFullNameArray = $itemArray[-1].Split(".")               # ["this is-my_text", "file, txt"]
-            $item_ext          = $itemFullNameArray[-1]                  # "txt"
-            $item_name         = $itemFullName.Replace(".$item_ext", "") # this is-my_text.file
+            $itemFullNameArray = $itemArray[-1].Split(".")                    # ["this is-my_text", "file, txt"]
+            $itemExtension     = $itemFullNameArray[-1]                       # "txt"
+            $itemName          = $itemFullName.Replace(".$itemExtension", "") # this is-my_text.file
 
             # If the name starts with a number it adds a '_' to the beginning (variables can't start with a number)
-            if ($item_name -match "^[0-9]") { $item_name = $item_name.Insert(0, "_") }
+            if ($itemName -match "^[0-9]") { $itemName = $itemName.Insert(0, "_") }
 
             $filesObject.hasExtension = $true
         }
         else
         {
-            $item_name = $itemFullName
+            $itemName = $itemFullName
             $filesObject.hasExtension = $false
         }
 
-        $item_name = $item_name.Replace(" ", "_") # "this_is-my_text.file"
-        $item_name = $item_name.Replace("-", "_") # "this_is_my_text.file"
-        $item_name = $item_name.Replace(".", "_") # "this_is_my_text_file"
+        $itemName = $itemName.Replace(" ", "_") # "this_is-my_text.file"
+        $itemName = $itemName.Replace("-", "_") # "this_is_my_text.file"
+        $itemName = $itemName.Replace(".", "_") # "this_is_my_text_file"
 
         if ($itemFullName.Contains("."))
         {
             # If the extension doesn't exist in the object then we create it
-            if (-Not $filesObject.Contains($item_ext))
+            if (-Not $filesObject.Contains($itemExtension))
             {
-                $filesObject.$item_ext = @{}
+                $filesObject.$itemExtension = @{}
             }
 
             # Adds the file name in the corresponding extension with its value
-            $filesObject.$item_ext.$item_name = $_ # $filesObject.txt.textFile = "things\txtFiles\this is-my_text.file.txt"
+            $filesObject.$itemExtension.$itemName = $_ # $filesObject.txt.textFile = "things\txtFiles\this is-my_text.file.txt"
         }
         else
         {
-            $filesObject.$item_name = $_ # $filesObject.textFile = "things\txtFiles\this is-my_text.file.txt"
+            $filesObject.$itemName = $_ # $filesObject.textFile = "things\txtFiles\this is-my_text.file.txt"
         }
     }
 
