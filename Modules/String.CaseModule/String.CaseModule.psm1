@@ -16,157 +16,77 @@ $BaseCaseSeparator = "&"
 #region Case Functions
 
 # This function is so versatile, but it's slow.
-function ConvertFrom-CamelCase
+function ConvertFrom-CamelCase([string] $InputObject)
 {
-    [CmdletBinding()]
-    param(
-        [Parameter(ValueFromPipeline = $true)]
-        [string] $InputObject
-    )
-
-    end { [regex]::replace($InputObject, '(?<=.)(?=[A-Z])', $BaseCaseSeparator).ToLower() }
+    return [Regex]::Replace($InputObject, '(?<=.)(?=[A-Z])', $BaseCaseSeparator).ToLower()
 }
 
-function ConvertTo-CamelCase
+function ConvertTo-CamelCase([string] $InputObject)
 {
-    [CmdletBinding()]
-    param(
-        [Parameter(ValueFromPipeline = $true)]
-        [string] $InputObject
-    )
+    $text = [Regex]::replace($InputObject, "($BaseCaseSeparator)(.)", { $args[0].Groups[2].Value.ToUpper() })
 
-    end
-    {
-        $text = [regex]::replace($InputObject, "($BaseCaseSeparator)(.)", { $args[0].Groups[2].Value.ToUpper() })
+    $firstChar = $text[0].ToString().ToLower()
 
-        $firstChar = $text[0].ToString().ToLower()
-
-        return $text.Remove(0, 1).Insert(0, $firstChar)
-    }
+    return $text.Remove(0, 1).Insert(0, $firstChar)
 }
 
-function ConvertFrom-PascalCase
+function ConvertFrom-PascalCase([string] $InputObject)
 {
-    [CmdletBinding()]
-    param(
-        [Parameter(ValueFromPipeline = $true)]
-        [string] $InputObject
-    )
-
-    end { $InputObject | ConvertFrom-CamelCase }
+    return ConvertFrom-CamelCase $InputObject
 }
 
-function ConvertTo-PascalCase
+function ConvertTo-PascalCase([string] $InputObject)
 {
-    [CmdletBinding()]
-    param(
-        [Parameter(ValueFromPipeline = $true)]
-        [string] $InputObject
-    )
-
-    end { [regex]::replace( $InputObject, "(^|$BaseCaseSeparator)(.)", { $args[0].Groups[2].Value.ToUpper() } ) }
+    return [Regex]::Replace( $InputObject, "(^|$BaseCaseSeparator)(.)", { $args[0].Groups[2].Value.ToUpper() } )
 }
 
-function ConvertFrom-SnakeCase
+function ConvertFrom-SnakeCase([string] $InputObject)
 {
-    [CmdletBinding()]
-    param(
-        [Parameter(ValueFromPipeline = $true)]
-        [string] $InputObject
-    )
-
-    end { $InputObject.Replace("_", $BaseCaseSeparator) }
+    return $InputObject.Replace("_", $BaseCaseSeparator)
 }
 
-function ConvertTo-SnakeCase
+function ConvertTo-SnakeCase([string] $InputObject)
 {
-    [CmdletBinding()]
-    param(
-        [Parameter(ValueFromPipeline = $true)]
-        [string] $InputObject
-    )
+    $text = $InputObject.Replace($BaseCaseSeparator, "_")
 
-    end
-    {
-        $text = $InputObject.Replace($BaseCaseSeparator, "_")
+    $firstChar = $text[0].ToString().ToLower()
 
-        $firstChar = $text[0].ToString().ToLower()
-
-        return $text.Remove(0, 1).Insert(0, $firstChar)
-    }
+    return $text.Remove(0, 1).Insert(0, $firstChar)
 }
 
-function ConvertFrom-UpperSnakeCase
+function ConvertFrom-UpperSnakeCase([string] $InputObject)
 {
-    [CmdletBinding()]
-    param(
-        [Parameter(ValueFromPipeline = $true)]
-        [string] $InputObject
-    )
-
-    end { $InputObject.ToLower() | ConvertFrom-SnakeCase }
+    return $InputObject.ToLower() | ConvertFrom-SnakeCase
 }
 
-function ConvertTo-UpperSnakeCase
+function ConvertTo-UpperSnakeCase([string] $InputObject)
 {
-    [CmdletBinding()]
-    param(
-        [Parameter(ValueFromPipeline = $true)]
-        [string] $InputObject
-    )
-
-    end { $InputObject.ToUpper() | ConvertTo-SnakeCase }
+    return $InputObject.ToUpper() | ConvertTo-SnakeCase
 }
 
-function ConvertFrom-KebabCase
+function ConvertFrom-KebabCase([string] $InputObject)
 {
-    [CmdletBinding()]
-    param(
-        [Parameter(ValueFromPipeline = $true)]
-        [string] $InputObject
-    )
-
-    end { $InputObject.Replace("-", $BaseCaseSeparator) }
+    return $InputObject.Replace("-", $BaseCaseSeparator)
 }
 
-function ConvertTo-KebabCase
+function ConvertTo-KebabCase([string] $InputObject)
 {
-    [CmdletBinding()]
-    param(
-        [Parameter(ValueFromPipeline = $true)]
-        [string] $InputObject
-    )
+    $text = $InputObject.Replace($BaseCaseSeparator, "-")
 
-    end
-    {
-        $text = $InputObject.Replace($BaseCaseSeparator, "-")
+    $firstChar = $text[0].ToString().ToLower()
 
-        $firstChar = $text[0].ToString().ToLower()
-
-        return $text.Remove(0, 1).Insert(0, $firstChar)
-    }
+    return $text.Remove(0, 1).Insert(0, $firstChar)
 }
 
-function ConvertFrom-TrainCase
+function ConvertFrom-TrainCase([string] $InputObject)
 {
-    [CmdletBinding()]
-    param(
-        [Parameter(ValueFromPipeline = $true)]
-        [string] $InputObject
-    )
-
-    end { $InputObject.Replace("-", $BaseCaseSeparator) }
+    return $InputObject.Replace("-", $BaseCaseSeparator)
 }
 
-function ConvertTo-TrainCase
-{
-    [CmdletBinding()]
-    param(
-        [Parameter(ValueFromPipeline = $true)]
-        [string] $InputObject
-    )
 
-    end { [regex]::replace( $InputObject, "(^|$BaseCaseSeparator)(.)", { "-$($args[0].Groups[2].Value.ToUpper())" } ).Remove(0, 1) }
+function ConvertTo-TrainCase([string] $InputObject)
+{
+    return [Regex]::Replace( $InputObject, "(^|$BaseCaseSeparator)(.)", { "-$($args[0].Groups[2].Value.ToUpper())" } ).Remove(0, 1)
 }
 
 #endregion
