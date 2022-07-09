@@ -11,7 +11,7 @@
     Gets all the file and folder links from a web page (like a VPS).
 
     .DESCRIPTION
-    This method is supposed to be used to download files and folders in Get-FilesFromUri
+    This method is supposed to be used to download files and folders in Invoke-Download
     and to do so it's useful to know what is a folder and what is a file when we introduce a url
     it's going to be a folder which will contain more folders and files.
 
@@ -46,9 +46,9 @@ function Invoke-FileLinksFromUri([string] $Uri, [switch] $Verbose)
 	return $linkList
 }
 
-# This is the prive version of Get-FilesFromUri, we have to define the other function in other to
+# This is the prive version of Invoke-Download, we have to define the other function in other to
 # make the files be contained in the folder given in the Uri.
-function Get-FilesFromUri-WithoutContainingFolder([string] $Uri, [string] $Destination = ".\", [switch] $Recurse , [switch] $Verbose)
+function Invoke-Download-WithoutContainingFolder([string] $Uri, [string] $Destination = ".\", [switch] $Recurse , [switch] $Verbose)
 {
     $links = Invoke-FileLinksFromUri -Uri $Uri -Verbose:$Verbose
 
@@ -68,7 +68,7 @@ function Get-FilesFromUri-WithoutContainingFolder([string] $Uri, [string] $Desti
             {
                 try
                 {
-                    Get-FilesFromUri-WithoutContainingFolder -Uri "$Uri$folderName/" -Destination "$Destination\$folderName\" -Recurse:$Recurse -Verbose:$Verbose
+                    Invoke-Download-WithoutContainingFolder -Uri "$Uri$folderName/" -Destination "$Destination\$folderName\" -Recurse:$Recurse -Verbose:$Verbose
                 }
                 catch # This will be thrown if a file has no extension
                 {
@@ -109,7 +109,7 @@ function Get-FilesFromUri-WithoutContainingFolder([string] $Uri, [string] $Desti
     .PARAMETER Recurse
     If present it downloads all the files from every single folder recursively.
 #>
-function Get-FilesFromUri([string] $Uri, [string] $Destination = ".\", [switch] $Recurse, [switch] $Verbose)
+function Invoke-Download([string] $Uri, [string] $Destination = ".\", [switch] $Recurse, [switch] $Verbose)
 {
     $splittedUri    = $Uri.Split("/")
     $rootFolderName = $splittedUri[$splittedUri.Length - 2]
@@ -118,7 +118,7 @@ function Get-FilesFromUri([string] $Uri, [string] $Destination = ".\", [switch] 
 
     New-Item -Path $Destination -ItemType Directory
 
-    Get-FilesFromUri-WithoutContainingFolder -Uri $Uri -Destination $Destination -Recurse:$Recurse -Verbose:$Verbose
+    Invoke-Download-WithoutContainingFolder -Uri $Uri -Destination $Destination -Recurse:$Recurse -Verbose:$Verbose
 }
 
 
@@ -139,5 +139,5 @@ function Invoke-FileContentExpression([string] $Uri)
 
 
 Export-ModuleMember -Function `
-    Get-FilesFromUri,
+    Invoke-Download,
     Invoke-FileContentExpression
