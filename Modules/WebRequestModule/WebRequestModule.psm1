@@ -5,6 +5,9 @@
 # From repository: https://github.com/ElianFabian/powershell-utils
 
 
+# Links of interest:
+# http://svn.apache.org/repos/asf/ (For testing purposes)
+
 
 <#
     .SYNOPSIS
