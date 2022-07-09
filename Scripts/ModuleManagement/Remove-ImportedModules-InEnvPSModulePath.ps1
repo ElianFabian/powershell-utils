@@ -8,7 +8,7 @@
 
 $userModulePath = $env:PSModulePath.Split(";")[0]
 
-$modulesFromRepository = (Get-ChildItem -Path ..\Modules\*).Name
+$modulesFromRepository = (Get-ChildItem -Path ..\..\Modules\*).Name
 
 $modulesFromUserComputer = (Get-ChildItem -Path $userModulePath)
 

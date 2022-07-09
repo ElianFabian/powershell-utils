@@ -8,7 +8,7 @@
 
 $userModulePath = $env:PSModulePath.Split(";")[0]
 
-Copy-Item -Path ..\Modules\* -Destination $userModulePath -Recurse
+Copy-Item -Path ..\..\Modules\* -Destination $userModulePath -Recurse
 
 
 Invoke-Item -Path $userModulePath
