@@ -21,7 +21,7 @@
     .PARAMETER Uri
     The URI of the web page.
 #>
-function Invoke-FileLinksFromUri([string] $Uri, [switch] $Verbose)
+function Get-FileLinksFromWeb([string] $Uri, [switch] $Verbose)
 {
     # If the Uri doesn't ends with a slash then we add it because it's supposed to be a folder,
     # ending with a backslash it's what we use to differentiate between files and folders.
@@ -58,7 +58,7 @@ function Invoke-DirectoryDownload_WithoutContainingFolder
     [switch] $Recurse ,
     [switch] $Verbose
 ) {
-    $linkList = Invoke-FileLinksFromUri -Uri $Uri -Verbose:$Verbose
+    $linkList = Get-FileLinksFromWeb -Uri $Uri -Verbose:$Verbose
 
     foreach($link in $linkList)
     {
