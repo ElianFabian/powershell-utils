@@ -47,11 +47,11 @@ function ConvertFrom-SnakeCase([string] $InputObject)
 
 function ConvertTo-SnakeCase([string] $InputObject)
 {
-    $text = $InputObject.Replace($BaseCaseSeparator, "_")
+    $text = [Regex]::Replace( $InputObject, "(^|$BaseCaseSeparator)(.)", { "_$($args[0].Groups[2].Value.ToLower())" } ).Remove(0, 1)
 
     $firstChar = $text[0].ToString().ToLower()
 
-    return $text.Remove(0, 1).Insert(0, $firstChar)
+    return $text -replace "^.", $firstChar
 }
 
 function ConvertFrom-UpperSnakeCase([string] $InputObject)
