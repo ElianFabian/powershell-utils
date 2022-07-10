@@ -104,7 +104,7 @@ foreach ($caseType in $caseTypeNames)
 
 
 
-function Set-Case
+function Convert-Case
 {
     param(
         [Parameter(ValueFromPipeline = $true)]
@@ -116,4 +116,4 @@ function Set-Case
 }
 
 
-Export-ModuleMember -Function Set-Case
+Export-ModuleMember -Function Convert-Case
