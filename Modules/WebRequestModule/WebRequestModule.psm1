@@ -127,7 +127,7 @@ function Invoke-DirectoryDownload
 
     $null = New-Item -Path $Destination -ItemType Directory
 
-    $previousProgressPreference = $ProgressPreference
+    $currentProgressPreference = $ProgressPreference
 
     if ($ForceFastDownload)
     {
@@ -144,7 +144,7 @@ function Invoke-DirectoryDownload
 
     Invoke-DirectoryDownload_WithoutContainingFolder -Uri $Uri -Destination $Destination -Recurse:$Recurse -Verbose:$Verbose
 
-    $ProgressPreference = $previousProgressPreference
+    $ProgressPreference = $currentProgressPreference
 }
 
 
