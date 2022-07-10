@@ -120,8 +120,7 @@ function Invoke-DirectoryDownload
     [switch] $ForceFastDownload
 ){
     $rootFolderName = $Uri | Split-Path -Leaf
-    
-    $Destination = Join-Path -Path $Destination -ChildPath $rootFolderName
+    $Destination    = Join-Path -Path $Destination -ChildPath $rootFolderName
 
     $null = New-Item -Path $Destination -ItemType Directory
 
