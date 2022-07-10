@@ -6,17 +6,24 @@
 
 
 
+$pathRegex = "([(\/|\\|\w)]{1}[a-zA-Z+0-9.\-]+)+(\/?|\\?){1}$|^([(\/|\\)]{1})"
+
+
+
 <#
     .DESCRIPTION
     Given a file full with file paths returns an object that groups those file by their extension.
 
     .PARAMETER Path
-    If it's a folder then it will get the paths of the files from that folder.
-    If it's a file then it will get the paths from its content.
-    If it's omitted then it gets the paths from the clipboard.
+    If it's a folder it will get the paths of the files from that folder.
+    If it's a file it will get the paths from its content.
+    By default it's the current directory.
 
     .PARAMETER Recurse
-    If $Path is a folder then you can get all the files' path recursively.
+    If $Path is a folder you can get all the files' path recursively.
+
+    .PARAMETER UseClipboard
+    When is present gets the content of the clipboard as the paths to process.
 
     .PARAMETER Relative
     If $Path is a folder the paths of the files will be relative to $Path directory.
@@ -30,34 +37,49 @@ function Get-FilesObject-GroupBy-Extension
     [string] $Path       = ".",
     [switch] $Recurse,
     [switch] $Relative,
+    [switch] $UseClipboard,
     [string] $RelativeTo = "."
 ) { 
     $filePaths   = ""
     $isFolder    = ""
     $filesObject = [ordered] @{} # Contains the files' path group by their extension
 
-    if ($Path -ne $null) { $isFolder = (Get-Item $Path).PSIsContainer }
+    if ($Path) { $isFolder = (Get-Item $Path).PSIsContainer }
 
-    if ($Path -eq $null)
+    if ($UseClipboard)
     {
         $filePaths = Get-Clipboard
+
+        if ($filePaths -notmatch $pathRegex)
+        {
+            Write-Error "Not a valid clipboard content."
+
+            return
+        }
+
+        if ($Recurse)
+        {
+            Write-Error "Recurse parameter doesn't make sense with UseClipboard."
+
+            return
+        }
     }
     elseif ($isFolder)
     {
         $filePaths = (Get-ChildItem -Path $Path -File -Recurse:$Recurse).FullName
-
-        if ($Relative)
-        {
-            $currentLocation = (Get-Location).Path
-
-            Set-Location $RelativeTo
-            $filePaths = ($filePaths | Resolve-Path -Relative )
-            Set-Location $currentLocation
-        }
     }
     else
     {
         $filePaths = Get-Content $Path
+    }
+
+    if ($Relative)
+    {
+        $currentLocation = (Get-Location).Path
+
+        Set-Location $RelativeTo
+        $filePaths = ($filePaths | Resolve-Path -Relative )
+        Set-Location $currentLocation
     }
 
     foreach ($filePath in $filePaths)
@@ -165,6 +187,9 @@ function Get-ClassFields
     .PARAMETER Relative
     If $Path is a folder the paths of the files will be relative to the indicated directory.
 
+    .PARAMETER UseClipboard
+    When is present gets the content of the clipboard as the paths to process.
+
     .PARAMETER RelativeTo
     If $Path is a folder the paths of the files will be relative to $RelativeTo directory.
     $Relative parameter must be added in order to use this parameter.
@@ -177,9 +202,10 @@ function Get-ClassStructure-FromFilesObject
     [int]          $TabSize      = 4,
     [switch]       $Recurse,
     [switch]       $Relative,
+    [switch]       $UseClipboard,
     [string]       $RelativeTo   = "."
 ) {
-    $filesObject = Get-FilesObject-GroupBy-Extension -Path $Path -Recurse:$Recurse -Relative:$Relative -RelativeTo $RelativeTo
+    $filesObject = Get-FilesObject-GroupBy-Extension -Path $Path -Recurse:$Recurse -Relative:$Relative -UseClipboard:$UseClipboard -RelativeTo $RelativeTo
 
     $tab = " " * $TabSize
 
