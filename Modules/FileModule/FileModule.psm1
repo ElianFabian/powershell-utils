@@ -78,8 +78,7 @@ function ConvertTo-Unix([string] $Path, [switch] $PassThru)
 
 
 
-Export-ModuleMember -Function `
-    ConvertTo-FileProperties,
-    ConvertFrom-FileProperties,
-    Copy-EmptyFolderStructure,
-    ConvertTo-Unix
+Export-ModuleMember -Function ConvertTo-FileProperties
+Export-ModuleMember -Function ConvertFrom-FileProperties
+Export-ModuleMember -Function Copy-EmptyFolderStructure
+Export-ModuleMember -Function ConvertTo-Unix
