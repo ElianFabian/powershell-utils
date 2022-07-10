@@ -34,7 +34,7 @@ function ConvertTo-FileProperties([string] $InputObject)
     .PARAMETER Path
     The path to the file containing the string in properties file format.
 #>
-function ConvertFrom-StringFileProperties([string] $Path)
+function ConvertFrom-FileProperties([string] $Path)
 {
     return Get-Content $Path | ConvertFrom-StringData
 }
@@ -80,6 +80,6 @@ function ConvertTo-Unix([string] $Path, [switch] $PassThru)
 
 Export-ModuleMember -Function `
     ConvertTo-FileProperties,
-    ConvertFrom-StringFileProperties,
+    ConvertFrom-FileProperties,
     Copy-EmptyFolderStructure,
     ConvertTo-Unix
