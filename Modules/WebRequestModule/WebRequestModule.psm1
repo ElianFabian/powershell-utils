@@ -183,6 +183,5 @@ function Invoke-FileContentExpression([string] $Uri)
 
 
 
-Export-ModuleMember -Function `
-    Invoke-DirectoryDownload,
-    Invoke-FileContentExpression
+Export-ModuleMember -Function Invoke-DirectoryDownload
+Export-ModuleMember -Function Invoke-FileContentExpression
