@@ -42,7 +42,11 @@ function Get-FileLinksFromWeb([string] $Uri, [switch] $Verbose)
     {
         $currentLink = $allLinksFromWebResponse.Links.Item($i)
 
-        if ($currentLink.innerHTML -eq $currentLink.href) # The links we want satisfy this condition
+        if ($currentLink.href -match "[\?\=]") { continue }
+
+        $isFileOrFolderLink = [regex]::Matches($currentLink.outerHTML, $currentLink.href).Count -eq 2
+
+        if ($isFileOrFolderLink)
         {
             $linkList.Add("$Uri$($currentLink.href)")
         }
