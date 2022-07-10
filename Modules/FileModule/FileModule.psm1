@@ -54,7 +54,7 @@ function ConvertFrom-StringFileProperties([string] $Path)
     .PARAMETER Destination
     The destination of the copy.
 #>
-function Copy-FolderStructure-WithEmptyFiles([string] $Path, [string] $Destination)
+function Copy-EmptyFolderStructure([string] $Path, [string] $Destination)
 {
 	$pathName = (Get-Item $Path).Name
 
@@ -81,5 +81,5 @@ function ConvertTo-Unix([string] $Path, [switch] $PassThru)
 Export-ModuleMember -Function `
     ConvertTo-FileProperties,
     ConvertFrom-StringFileProperties,
-    Copy-FolderStructure-WithEmptyFiles,
+    Copy-EmptyFolderStructure,
     ConvertTo-Unix
