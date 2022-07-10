@@ -8,14 +8,13 @@
 
 $userModulePath = $env:PSModulePath.Split(";")[0]
 
-$modulesFromRepository = (Get-ChildItem -Path ..\..\Modules\*).Name
-
+$modulesFromRepository   = (Get-ChildItem -Path ..\..\Modules\*).Name
 $modulesFromUserComputer = (Get-ChildItem -Path $userModulePath)
 
-$modulesFromUserComputer | ForEach-Object {
-
-    if ($modulesFromRepository.Contains($_.Name))
+foreach ($modulePath in $modulesFromUserComputer)
+{
+    if ($modulesFromRepository -contains $modulePath.Name)
     {
-        Remove-Item -Path $_.FullName -Force -Recurse -Confirm:$false
+        Remove-Item -Path $modulePath.FullName -Force -Recurse -Confirm:$false
     }
 }
