@@ -54,7 +54,7 @@ function Invoke-FileLinksFromUri([string] $Uri, [switch] $Verbose)
 function Invoke-DownloadFilesFromWeb_WithoutContainingFolder
 (
     [string] $Uri,
-    [string] $OutFolder = "./",
+    [string] $Destination = "./",
     [switch] $Recurse ,
     [switch] $Verbose
 ) {
@@ -68,13 +68,13 @@ function Invoke-DownloadFilesFromWeb_WithoutContainingFolder
         {
             $folderName = $link | Split-Path -Leaf
 
-            $null = New-Item -Path "$OutFolder/$folderName" -ItemType Directory
+            $null = New-Item -Path "$Destination/$folderName" -ItemType Directory
 
             if ($Recurse)
             {
                 try
                 {
-                    Invoke-DownloadFilesFromWeb_WithoutContainingFolder -Uri $link -OutFolder "$OutFolder/$folderName/" -Recurse:$Recurse -Verbose:$Verbose
+                    Invoke-DownloadFilesFromWeb_WithoutContainingFolder -Uri $link -Destination "$Destination/$folderName/" -Recurse:$Recurse -Verbose:$Verbose
                 }
                 catch [System.Net.WebException]
                 {
@@ -84,11 +84,11 @@ function Invoke-DownloadFilesFromWeb_WithoutContainingFolder
                 {
                     Write-Warning "$_`nFile has no extension: $link"
 
-                    Remove-Item -Path "$OutFolder/$folderName/" -Recurse
+                    Remove-Item -Path "$Destination/$folderName/" -Recurse
 
                     $fileName = $folderName
 
-                    Invoke-WebRequest -Uri $link -OutFile "$OutFolder/$fileName" -Verbose:$Verbose
+                    Invoke-WebRequest -Uri $link -OutFile "$Destination/$fileName" -Verbose:$Verbose
                 }
             }
         }
@@ -96,7 +96,7 @@ function Invoke-DownloadFilesFromWeb_WithoutContainingFolder
         {
             $fileName = Split-Path $link -Leaf
 
-            Invoke-WebRequest -Uri $link -OutFile "$OutFolder/$fileName" -Verbose:$Verbose
+            Invoke-WebRequest -Uri $link -OutFile "$Destination/$fileName" -Verbose:$Verbose
         }
     }
 }
@@ -111,16 +111,16 @@ function Invoke-DownloadFilesFromWeb_WithoutContainingFolder
 function Invoke-DownloadFilesFromWeb
 (
     [string] $Uri,
-    [string] $OutFolder = "./",
+    [string] $Destination = "./",
     [switch] $Recurse,
     [switch] $Verbose,
     [switch] $ForceFastDownload
 ){
     $rootFolderName = $Uri | Split-Path -Leaf
     
-    $OutFolder = Join-Path -Path $OutFolder -ChildPath $rootFolderName
+    $Destination = Join-Path -Path $Destination -ChildPath $rootFolderName
 
-    $null = New-Item -Path $OutFolder -ItemType Directory
+    $null = New-Item -Path $Destination -ItemType Directory
 
     $previousProgressPreference = $ProgressPreference
 
@@ -137,7 +137,7 @@ function Invoke-DownloadFilesFromWeb
         }
     }
 
-    Invoke-DownloadFilesFromWeb_WithoutContainingFolder -Uri $Uri -OutFolder $OutFolder -Recurse:$Recurse -Verbose:$Verbose
+    Invoke-DownloadFilesFromWeb_WithoutContainingFolder -Uri $Uri -Destination $Destination -Recurse:$Recurse -Verbose:$Verbose
 
     $ProgressPreference = $previousProgressPreference
 }
