@@ -14,7 +14,7 @@
     Gets all the file and folder links from a web page (like a VPS).
 
     .DESCRIPTION
-    This method is supposed to be used to download files and folders in Invoke-DownloadFilesFromWeb
+    This method is supposed to be used to download files and folders in Invoke-DirectoryDownload
     and to do so it's useful to know what is a folder and what is a file when we introduce a url
     it's going to be a folder which will contain more folders and files.
 
@@ -49,9 +49,9 @@ function Invoke-FileLinksFromUri([string] $Uri, [switch] $Verbose)
 	return $linkList.AsReadOnly()
 }
 
-# This is the prive version of Invoke-DownloadFilesFromWeb, we have to define the other function in other to
+# This is the prive version of Invoke-DirectoryDownload, we have to define the other function in other to
 # make the files be contained in the folder given in the Uri.
-function Invoke-DownloadFilesFromWeb_WithoutContainingFolder
+function Invoke-DirectoryDownload_WithoutContainingFolder
 (
     [string] $Uri,
     [string] $Destination = "./",
@@ -74,7 +74,7 @@ function Invoke-DownloadFilesFromWeb_WithoutContainingFolder
             {
                 try
                 {
-                    Invoke-DownloadFilesFromWeb_WithoutContainingFolder -Uri $link -Destination "$Destination/$folderName/" -Recurse:$Recurse -Verbose:$Verbose
+                    Invoke-DirectoryDownload_WithoutContainingFolder -Uri $link -Destination "$Destination/$folderName/" -Recurse:$Recurse -Verbose:$Verbose
                 }
                 catch [System.Net.WebException]
                 {
@@ -108,7 +108,7 @@ function Invoke-DownloadFilesFromWeb_WithoutContainingFolder
     .DESCRIPTION
     Downloads all the files and folders from a url inside the folder they are contained in a web page (for example a VPS).
 #>
-function Invoke-DownloadFilesFromWeb
+function Invoke-DirectoryDownload
 (
     [string] $Uri,
     [string] $Destination = "./",
@@ -138,7 +138,7 @@ function Invoke-DownloadFilesFromWeb
         }
     }
 
-    Invoke-DownloadFilesFromWeb_WithoutContainingFolder -Uri $Uri -Destination $Destination -Recurse:$Recurse -Verbose:$Verbose
+    Invoke-DirectoryDownload_WithoutContainingFolder -Uri $Uri -Destination $Destination -Recurse:$Recurse -Verbose:$Verbose
 
     $ProgressPreference = $previousProgressPreference
 }
@@ -161,5 +161,5 @@ function Invoke-FileContentExpression([string] $Uri)
 
 
 Export-ModuleMember -Function `
-    Invoke-DownloadFilesFromWeb,
+    Invoke-DirectoryDownload,
     Invoke-FileContentExpression
