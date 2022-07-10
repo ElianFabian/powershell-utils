@@ -42,13 +42,17 @@ function Get-FileLinksFromWeb([string] $Uri, [switch] $Verbose)
     {
         $currentLink = $allLinksFromWebResponse.Links.Item($i)
 
-        if ($currentLink.href -match "[\?\=]") { continue }
+        $href = $currentLink.href
 
-        $isFileOrFolderLink = [regex]::Matches($currentLink.outerHTML, $currentLink.href).Count -eq 2
+        $notFileOrFolderLinkCondition = ($href -match '[\?\=]') -or ($href -eq "/")
+
+        if ($notFileOrFolderLinkCondition) { continue }
+
+        $isFileOrFolderLink = [regex]::Matches($currentLink.outerHTML, $href).Count -eq 2
 
         if ($isFileOrFolderLink)
         {
-            $linkList.Add("$Uri$($currentLink.href)")
+            $linkList.Add("$Uri$($href)")
         }
     }
 
@@ -62,7 +66,8 @@ function Invoke-DirectoryDownload_WithoutContainingFolder
     [string] $Uri,
     [string] $Destination = "./",
     [switch] $Recurse ,
-    [switch] $Verbose
+    [switch] $Verbose,
+    [switch] $SkipHttpErrorCheck
 ) {
     $linkList = Get-FileLinksFromWeb -Uri $Uri -Verbose:$Verbose
 
@@ -83,7 +88,7 @@ function Invoke-DirectoryDownload_WithoutContainingFolder
             {
                 try
                 {
-                    Invoke-DirectoryDownload_WithoutContainingFolder -Uri $link -Destination "$newDestination/" -Recurse:$Recurse -Verbose:$Verbose
+                    Invoke-DirectoryDownload_WithoutContainingFolder -Uri $link -Destination "$newDestination/" -Recurse:$Recurse -Verbose:$Verbose -SkipHttpErrorCheck:$SkipHttpErrorCheck
                 }
                 catch [System.Net.WebException]
                 {
@@ -97,7 +102,7 @@ function Invoke-DirectoryDownload_WithoutContainingFolder
 
                     $filename = $folderName
 
-                    Invoke-WebRequest -Uri $link -OutFile $Destination/$filename -Verbose:$Verbose
+                    Invoke-WebRequest -Uri $link -OutFile $Destination/$filename -Verbose:$Verbose -SkipHttpErrorCheck:$SkipHttpErrorCheck
                 }
             }
         }
@@ -105,7 +110,7 @@ function Invoke-DirectoryDownload_WithoutContainingFolder
         {
             $filename = Split-Path -Path $link -Leaf
 
-            Invoke-WebRequest -Uri $link -OutFile $Destination/$filename -Verbose:$Verbose
+            Invoke-WebRequest -Uri $link -OutFile $Destination/$filename -Verbose:$Verbose -SkipHttpErrorCheck:$SkipHttpErrorCheck
         }
     }
 }
@@ -124,7 +129,8 @@ function Invoke-DirectoryDownload
     [switch] $Recurse,
     [switch] $Verbose,
     [Alias("HideProgressBar")]
-    [switch] $ForceFastDownload
+    [switch] $ForceFastDownload,
+    [switch] $SkipHttpErrorCheck
 ){
     $rootFolderName = $Uri | Split-Path -Leaf
     $Destination    = Join-Path -Path $Destination -ChildPath $rootFolderName
@@ -146,7 +152,7 @@ function Invoke-DirectoryDownload
         }
     }
 
-    Invoke-DirectoryDownload_WithoutContainingFolder -Uri $Uri -Destination $Destination -Recurse:$Recurse -Verbose:$Verbose
+    Invoke-DirectoryDownload_WithoutContainingFolder -Uri $Uri -Destination $Destination -Recurse:$Recurse -Verbose:$Verbose -SkipHttpErrorCheck:$SkipHttpErrorCheck
 
     $ProgressPreference = $currentProgressPreference
 }
