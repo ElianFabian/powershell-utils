@@ -114,6 +114,7 @@ function Invoke-DownloadFilesFromWeb
     [string] $Destination = "./",
     [switch] $Recurse,
     [switch] $Verbose,
+    [Alias("HideProgressBar")]
     [switch] $ForceFastDownload
 ){
     $rootFolderName = $Uri | Split-Path -Leaf
