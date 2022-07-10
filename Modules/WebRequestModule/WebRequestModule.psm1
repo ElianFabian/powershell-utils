@@ -26,7 +26,7 @@
 function Get-FileLinksFromWeb([string] $Uri, [switch] $Verbose)
 {
     # If the Uri doesn't ends with a slash then we add it because it's supposed to be a folder,
-    # ending with a backslash it's what we use to differentiate between files and folders.
+    # ending with a slash it's what we use to differentiate between files and folders.
     if (-not $Uri.EndsWith("/"))
     {
         $Uri += "/"
@@ -66,39 +66,42 @@ function Invoke-DirectoryDownload_WithoutContainingFolder
     {
         $isFolder = $link.EndsWith("/")
 
+        # We assume that if the link ends with a slash it's a folder, if it doesn't end with a slash
         if ($isFolder)
         {
-            $folderName = $link | Split-Path -Leaf
+            $folderName = Split-Path -Path $link -Leaf
 
-            $null = New-Item -Path "$Destination/$folderName" -ItemType Directory
+            $newDestination = Join-Path -Path $Destination -ChildPath $folderName
+
+            $null = New-Item -Path $newDestination -ItemType Directory
 
             if ($Recurse)
             {
                 try
                 {
-                    Invoke-DirectoryDownload_WithoutContainingFolder -Uri $link -Destination "$Destination/$folderName/" -Recurse:$Recurse -Verbose:$Verbose
+                    Invoke-DirectoryDownload_WithoutContainingFolder -Uri $link -Destination "$newDestination/" -Recurse:$Recurse -Verbose:$Verbose
                 }
                 catch [System.Net.WebException]
                 {
                     Write-Warning "$_`nRelated link: $link"
                 }
-                catch # This will be thrown if a file has no extension
+                catch # In case the assumption is wrong we have to delete the folder we created and download the file
                 {
                     Write-Warning "$_`nFile has no extension: $link"
 
-                    Remove-Item -Path "$Destination/$folderName/" -Recurse
+                    Remove-Item -Path $newDestination -Recurse
 
-                    $fileName = $folderName
+                    $filename = $folderName
 
-                    Invoke-WebRequest -Uri $link -OutFile "$Destination/$fileName" -Verbose:$Verbose
+                    Invoke-WebRequest -Uri $link -OutFile $Destination/$filename -Verbose:$Verbose
                 }
             }
         }
         else
         {
-            $fileName = Split-Path $link -Leaf
+            $filename = Split-Path -Path $link -Leaf
 
-            Invoke-WebRequest -Uri $link -OutFile "$Destination/$fileName" -Verbose:$Verbose
+            Invoke-WebRequest -Uri $link -OutFile $Destination/$filename -Verbose:$Verbose
         }
     }
 }
@@ -130,11 +133,11 @@ function Invoke-DirectoryDownload
     {
         $ProgressPreference = 'SilentlyContinue'
 
-        Write-Verbose "Disable Progressbar because of ForceFastDownload" -Verbose
+        Write-Verbose "Disable Progressbar because of ForceFastDownload (Hide ProgerssBar)" -Verbose
 
         if ($Verbose)
         {
-            Write-Verbose "Disable Verbose because of ForceFastDownload" -Verbose
+            Write-Verbose "Disable Verbose because of ForceFastDownload (Hide ProgerssBar)" -Verbose
             $Verbose = $false
         }
     }
