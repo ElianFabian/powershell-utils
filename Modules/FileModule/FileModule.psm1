@@ -62,9 +62,24 @@ function Copy-FolderStructure-WithEmptyFiles([string] $Path, [string] $Destinati
     Get-ChildItem $Path -File      -Recurse -Name | ForEach-Object { New-Item $Destination/$pathName/$_ }
 }
 
+<#
+    .SYNOPSIS
+    Converts a given file into Unix format.
+
+    .OUTPUTS
+    None.
+    When you use the PassThru parameter, `Set-Content` generates a System.String object that represents the content.
+    Otherwise, this cmdlet does not generate any output.
+#>
+function ConvertTo-Unix([string] $Path, [switch] $PassThru)
+{
+    ((Get-Content $Path) -join "`n") + "`n" | Set-Content -NoNewline $Path -PassThru:$PassThru
+}
+
 
 
 Export-ModuleMember -Function `
     ConvertTo-FileProperties,
     ConvertFrom-StringFileProperties,
-    Copy-FolderStructure-WithEmptyFiles
+    Copy-FolderStructure-WithEmptyFiles,
+    ConvertTo-Unix
