@@ -259,7 +259,5 @@ function ConvertFrom-FilesObject
 
 
 
-Export-ModuleMember `
-    -Function `
-        Get-FilesObject-GroupBy-Extension,
-        ConvertFrom-FilesObject
+Export-ModuleMember -Function Get-FilesObject-GroupBy-Extension
+Export-ModuleMember -Function ConvertFrom-FilesObject
