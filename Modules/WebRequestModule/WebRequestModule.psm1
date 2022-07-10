@@ -91,14 +91,8 @@ function Invoke-DirectoryDownload_WithoutContainingFolder
                 {
                     Invoke-DirectoryDownload_WithoutContainingFolder -Uri $link -Destination "$newDestination/" -Recurse:$Recurse -Verbose:$Verbose -ExtraVerbose:$ExtraVerbose -SkipHttpErrorCheck:$SkipHttpErrorCheck
                 }
-                catch [System.Net.WebException]
-                {
-                    Write-Warning "$_`nRelated link: $link"
-                }
-                catch [System.Management.Automation]
-                {
-                    Write-Warning "$_`nRelated link: $link"
-                }
+                catch [System.Net.WebException] {}
+                catch [System.Management.Automation] {}
                 catch # In case the assumption is wrong we have to delete the folder we created and download the file
                 {
                     Write-Warning "$_`nFile has no extension: $link"
