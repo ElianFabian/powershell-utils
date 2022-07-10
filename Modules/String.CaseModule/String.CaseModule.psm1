@@ -116,5 +116,4 @@ function Set-Case
 }
 
 
-Export-ModuleMember `
-    -Function Set-Case
+Export-ModuleMember -Function Set-Case
