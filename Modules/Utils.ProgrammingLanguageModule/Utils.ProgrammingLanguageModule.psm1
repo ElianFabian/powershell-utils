@@ -6,10 +6,6 @@
 
 
 
-$pathRegex = "([(\/|\\|\w)]{1}[a-zA-Z+0-9.\-]+)+(\/?|\\?){1}$|^([(\/|\\)]{1})"
-
-
-
 <#
     .DESCRIPTION
     Given a file full with file paths returns an object that groups those file by their extension.
@@ -17,13 +13,13 @@ $pathRegex = "([(\/|\\|\w)]{1}[a-zA-Z+0-9.\-]+)+(\/?|\\?){1}$|^([(\/|\\)]{1})"
     .PARAMETER Path
     If it's a folder it will get the paths of the files from that folder.
     If it's a file it will get the paths from its content.
-    By default it's the current directory.
+
+    .PARAMETER ListOfPaths
+    Array of path files.
+    (You could for example use it with Get-Clipboard.)
 
     .PARAMETER Recurse
     If $Path is a folder you can get all the files' path recursively.
-
-    .PARAMETER UseClipboard
-    When is present gets the content of the clipboard as the paths to process.
 
     .PARAMETER Relative
     If $Path is a folder the paths of the files will be relative to $Path directory.
@@ -31,46 +27,43 @@ $pathRegex = "([(\/|\\|\w)]{1}[a-zA-Z+0-9.\-]+)+(\/?|\\?){1}$|^([(\/|\\)]{1})"
     .PARAMETER RelativeTo
     If $Path is a folder the paths of the files will be relative to $RelativeTo directory.
     $Relative parameter must be added in order to use this parameter.
+
+    .OUTPUTS
+    PSCustomObject
 #>
-function Get-FilesObject-GroupBy-Extension
+function Get-FilesObjectGroupByExtension
 (
-    [string] $Path       = ".",
-    [switch] $Recurse,
-    [switch] $Relative,
-    [switch] $UseClipboard,
-    [string] $RelativeTo = "."
+    [string]   $Path,
+    [string[]] $ListOfPaths,
+    [switch]   $Recurse,
+    [switch]   $Relative,
+    [string]   $RelativeTo = "."
 ) { 
-    $filePaths   = ""
-    $isFolder    = ""
-    $filesObject = [ordered] @{} # Contains the files' path group by their extension
+    $pathList    = @()
+    $filesObject = [ordered] @{} # Contains the file paths group by their extension
 
-    if ($Path) { $isFolder = (Get-Item $Path).PSIsContainer }
-
-    if ($UseClipboard)
+    if ($ListOfPaths)
     {
-        $filePaths = Get-Clipboard
+        $pathList = $ListOfPaths
 
-        if ($filePaths -notmatch $pathRegex)
+        if ($Path)
         {
-            Write-Error "Not a valid clipboard content."
-
+            Write-Error "You can't use both Path and ListOfPaths parameters"
             return
         }
-
         if ($Recurse)
         {
-            Write-Error "Recurse parameter doesn't make sense with UseClipboard."
-
+            Write-Error "You can't use both Recurse and ListOfPaths parameters"
             return
         }
     }
-    elseif ($isFolder)
+    elseif (Test-Path $Path -PathType Container)
     {
-        $filePaths = (Get-ChildItem -Path $Path -File -Recurse:$Recurse).FullName
+        $pathList = (Get-ChildItem $Path -File -Recurse:$Recurse).FullName
     }
     else
     {
-        $filePaths = Get-Content $Path
+        $pathList = Get-Content $Path
     }
 
     if ($Relative)
@@ -78,52 +71,48 @@ function Get-FilesObject-GroupBy-Extension
         $currentLocation = (Get-Location).Path
 
         Set-Location $RelativeTo
-        $filePaths = ($filePaths | Resolve-Path -Relative )
+        $pathList = ($pathList | Resolve-Path -Relative )
         Set-Location $currentLocation
     }
 
-    foreach ($filePath in $filePaths)
+    foreach ($filePath in $pathList)
     {
-        # $filePath = "things/txtFiles/this is-my_text.file.txt" (This is for visual help. It's an example of the worst filename case)
+        # $filePath = "things/txtFiles/12this is-my_text.file.txt" (This is for visual help. It's an example of the worst filename case)
 
-        $itemFullName = Split-Path -Path $filePath -Leaf # "this is-my_text.file.txt"
+        $itemFullName  = Split-Path -Path $filePath -Leaf # "12this is-my_text.file.txt"
+        $itemName      = ""
+        $itemExtension = ""
 
-        # This is in case you want to put just a list of strings in a file and just get an object with atributes and values without any kind of group
         if ($itemFullName.Contains("."))
         {
-            $itemFullNameArray = $itemFullName.Split(".")                     # ["this is-my_text", "file, txt"]
-            $itemExtension     = $itemFullNameArray[-1]                       # "txt"
-            $itemName          = $itemFullName.Replace(".$itemExtension", "") # this is-my_text.file
-
-            # If the name starts with a number it adds a '_' to the beginning (variables can't start with a number)
-            if ($itemName -match "^[0-9]") { $itemName = $itemName.Insert(0, "_") }
+            $itemExtension = $itemFullName.Split(".")[-1]                 # txt
+            $itemName      = $itemFullName.Replace(".$itemExtension", "") # 12this is-my_text.file
 
             $filesObject.hasExtension = $true
         }
-        else
+        else # In case you want a list of strings without grouping by extension (these strings wouldn't actually have an extension)
         {
             $itemName = $itemFullName
             $filesObject.hasExtension = $false
         }
 
-        $itemName = $itemName.Replace(" ", "_") # "this_is-my_text.file"
-        $itemName = $itemName.Replace("-", "_") # "this_is_my_text.file"
-        $itemName = $itemName.Replace(".", "_") # "this_is_my_text_file"
+        # Inserts an underscore to the variable name if it starts with a non-letter character
+        $itemName = $itemName -replace '[^a-zA-Z]', '_' # _12this_is_my_text_file
 
         if ($itemFullName.Contains("."))
         {
-            # If the extension doesn't exist in the object then we create it
+            # If the extension doesn't exist yet in the object then we create it
             if (-not $filesObject.Contains($itemExtension))
             {
                 $filesObject.$itemExtension = @{}
             }
 
-            # Adds the file name in the corresponding extension with its value
-            $filesObject.$itemExtension.$itemName = $filePath # $filesObject.txt.textFile = "things/txtFiles/this is-my_text.file.txt"
+            # Adds the filename in the corresponding extension with its value
+            $filesObject.$itemExtension.$itemName = $filePath # $filesObject.txt._12this_is_my_text_file = "things/txtFiles/12this is-my_text.file.txt"
         }
         else
         {
-            $filesObject.$itemName = $filePath # $filesObject.textFile = "things/txtFiles/this is-my_text.file.txt"
+            $filesObject.$itemName = $filePath # $filesObject._12this_is_my_text_file = "things/txtFiles/12this is-my_text.file.txt"
         }
     }
 
@@ -165,12 +154,16 @@ function Get-ClassFields
 
 <#
     .DESCRIPTION
-    Given a file full with file paths returns a string of a class in the specified programming language that groups those file by their extension as subclasses.
+    Given a file full with file paths returns a string of a class in the specified programming language
+    that groups those file by their extension as subclasses.
 
     .PARAMETER Path
-    If $Path is a folder then it will get the paths of the files from that folder.
-    If $Path is a file then it will get the paths from its content.
-    If $Path is not specify then it gets the paths from the clipboard.
+    If it's a folder it will get the paths of the files from that folder.
+    If it's a file it will get the paths from its content.
+
+    .PARAMETER ListOfPaths
+    Array of path files.
+    (You could for example use it with Get-Clipboard).
 
     .PARAMETER FieldType
     It's the type of the fields, by default it's "string".
@@ -187,25 +180,31 @@ function Get-ClassFields
     .PARAMETER Relative
     If $Path is a folder the paths of the files will be relative to the indicated directory.
 
-    .PARAMETER UseClipboard
-    When is present gets the content of the clipboard as the paths to process.
-
     .PARAMETER RelativeTo
     If $Path is a folder the paths of the files will be relative to $RelativeTo directory.
     $Relative parameter must be added in order to use this parameter.
+
+    .OUTPUTS
+    String.
 #>
-function Get-ClassStructure-FromFilesObject
+function ConvertFrom-FilesObject
 (
-    [string]       $Path         = ".",
-    [string]       $FieldType    = "String",
+    [string]       $Path,
+    [string[]]     $ListOfPaths,
+    [string]       $FieldType    = "string",
     [LanguageType] $LanguageType = [LanguageType]::CSharp,
     [int]          $TabSize      = 4,
     [switch]       $Recurse,
     [switch]       $Relative,
-    [switch]       $UseClipboard,
     [string]       $RelativeTo   = "."
 ) {
-    $filesObject = Get-FilesObject-GroupBy-Extension -Path $Path -Recurse:$Recurse -Relative:$Relative -UseClipboard:$UseClipboard -RelativeTo $RelativeTo
+    $filesObject = Get-FilesObjectGroupByExtension -Path $Path -ListOfPaths $ListOfPaths -Recurse:$Recurse -Relative:$Relative -RelativeTo $RelativeTo
+
+    if ($null -eq $filesObject)
+    {
+        Write-Error "The files object is null"
+        return
+    }
 
     $tab = " " * $TabSize
 
@@ -263,4 +262,4 @@ function Get-ClassStructure-FromFilesObject
 Export-ModuleMember `
     -Function `
         Get-FilesObject-GroupBy-Extension,
-        Get-ClassStructure-FromFilesObject
+        ConvertFrom-FilesObject
