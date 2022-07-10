@@ -67,9 +67,10 @@ function Invoke-DirectoryDownload_WithoutContainingFolder
     [string] $Destination = "./",
     [switch] $Recurse ,
     [switch] $Verbose,
+    [switch] $ExtraVerbose,
     [switch] $SkipHttpErrorCheck
 ) {
-    $linkList = Get-FileLinksFromWeb -Uri $Uri -Verbose:$Verbose
+    $linkList = Get-FileLinksFromWeb -Uri $Uri -Verbose:$ExtraVerbose
 
     foreach($link in $linkList)
     {
@@ -88,9 +89,13 @@ function Invoke-DirectoryDownload_WithoutContainingFolder
             {
                 try
                 {
-                    Invoke-DirectoryDownload_WithoutContainingFolder -Uri $link -Destination "$newDestination/" -Recurse:$Recurse -Verbose:$Verbose -SkipHttpErrorCheck:$SkipHttpErrorCheck
+                    Invoke-DirectoryDownload_WithoutContainingFolder -Uri $link -Destination "$newDestination/" -Recurse:$Recurse -Verbose:$Verbose -ExtraVerbose:$ExtraVerbose -SkipHttpErrorCheck:$SkipHttpErrorCheck
                 }
                 catch [System.Net.WebException]
+                {
+                    Write-Warning "$_`nRelated link: $link"
+                }
+                catch [System.Management.Automation]
                 {
                     Write-Warning "$_`nRelated link: $link"
                 }
@@ -102,7 +107,11 @@ function Invoke-DirectoryDownload_WithoutContainingFolder
 
                     $filename = $folderName
 
-                    Invoke-WebRequest -Uri $link -OutFile $Destination/$filename -Verbose:$Verbose -SkipHttpErrorCheck:$SkipHttpErrorCheck
+                    Write-Verbose "- Downloading $link..." -Verbose:$Verbose
+
+                    Invoke-WebRequest -Uri $link -OutFile $Destination/$filename -Verbose:$ExtraVerbose -SkipHttpErrorCheck:$SkipHttpErrorCheck
+
+                    Write-Verbose "- Downloaded $link" -Verbose:$Verbose
                 }
             }
         }
@@ -110,7 +119,11 @@ function Invoke-DirectoryDownload_WithoutContainingFolder
         {
             $filename = Split-Path -Path $link -Leaf
 
-            Invoke-WebRequest -Uri $link -OutFile $Destination/$filename -Verbose:$Verbose -SkipHttpErrorCheck:$SkipHttpErrorCheck
+            Write-Verbose "- Downloading $link..." -Verbose:$Verbose
+
+            Invoke-WebRequest -Uri $link -OutFile $Destination/$filename -Verbose:$ExtraVerbose -SkipHttpErrorCheck:$SkipHttpErrorCheck
+
+            Write-Verbose "- Downloaded $link" -Verbose:$Verbose
         }
     }
 }
@@ -128,6 +141,7 @@ function Invoke-DirectoryDownload
     [string] $Destination = "./",
     [switch] $Recurse,
     [switch] $Verbose,
+    [switch] $ExtraVerbose,
     [Alias("HideProgressBar")]
     [switch] $ForceFastDownload,
     [switch] $SkipHttpErrorCheck
@@ -145,14 +159,15 @@ function Invoke-DirectoryDownload
 
         Write-Verbose "Disable Progressbar because of ForceFastDownload (Hide ProgerssBar)" -Verbose
 
-        if ($Verbose)
+        if ($Verbose -or $ExtraVerbose)
         {
-            Write-Verbose "Disable Verbose because of ForceFastDownload (Hide ProgerssBar)" -Verbose
-            $Verbose = $false
+            Write-Verbose "Disable Verbose because of ForceFastDownload" -Verbose
+            $Verbose      = $false
+            $ExtraVerbose = $false
         }
     }
 
-    Invoke-DirectoryDownload_WithoutContainingFolder -Uri $Uri -Destination $Destination -Recurse:$Recurse -Verbose:$Verbose -SkipHttpErrorCheck:$SkipHttpErrorCheck
+    Invoke-DirectoryDownload_WithoutContainingFolder -Uri $Uri -Destination $Destination -Recurse:$Recurse -Verbose:$Verbose -ExtraVerbose:$ExtraVerbose -SkipHttpErrorCheck:$SkipHttpErrorCheck
 
     $ProgressPreference = $currentProgressPreference
 }
