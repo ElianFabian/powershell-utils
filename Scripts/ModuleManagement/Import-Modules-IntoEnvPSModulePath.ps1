@@ -14,4 +14,4 @@ New-Item $userModulePath -ItemType Directory -ErrorAction SilentlyContinue
 Copy-Item -Path ..\..\Modules\* -Destination $userModulePath -Recurse
 
 
-Invoke-Item -Path $userModulePath
+# Invoke-Item -Path $userModulePath
