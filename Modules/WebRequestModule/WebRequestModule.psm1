@@ -105,8 +105,15 @@ function Invoke-DirectoryDownload_WithoutContainingFolder
                 }
                 catch [System.Net.WebException] {}
                 catch [System.Net.Sockets.SocketException] {}
+                catch [System.Management.Automation.RemoteException] {}
                 catch # In case the assumption is wrong we have to delete the folder we created and download the file
                 {
+                    if ($_.Exception.Response.StatusCode -eq [System.Net.HttpStatusCode]::InternalServerError)
+                    {
+                        Write-Warning "$($_.Exception.Message)`nRelated link: $link"
+                        continue 
+                    }
+
                     Write-Warning "$_`nFile has no extension: $link"
 
                     Remove-Item -Path $newDestination -Recurse
