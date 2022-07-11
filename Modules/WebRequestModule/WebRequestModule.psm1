@@ -9,7 +9,7 @@
 # Links of interest:
 # http://svn.apache.org/repos/asf/ (For testing purposes)
 
-
+$innerHTMLRegex = '((?<=>)(.*?)(?=<))'
 
 <#
     .SYNOPSIS
@@ -44,11 +44,11 @@ function Get-FileLinksFromWeb([string] $Uri, [switch] $Verbose)
 
         $href = $currentLink.href
 
-        $notFileOrFolderLinkCondition = ($href -match '[\?\=]') -or ($href -eq "/")
+        $innerHTML = (Select-String -InputObject $currentLink.outerHTML -Pattern $innerHTMLRegex).Matches.Value
 
-        if ($notFileOrFolderLinkCondition) { continue }
+        if ($null -eq $innerHTML) { continue }
 
-        $isFileOrFolderLink = [regex]::Matches($currentLink.outerHTML, $href).Count -eq 2
+        $isFileOrFolderLink = $href -eq $innerHTML
 
         if ($isFileOrFolderLink)
         {
@@ -65,7 +65,7 @@ function Invoke-DirectoryDownload_WithoutContainingFolder
 (
     [string] $Uri,
     [string] $Destination = "./",
-    [switch] $Recurse ,
+    [switch] $Recurse,
     [switch] $Verbose,
     [switch] $ExtraVerbose,
     [switch] $SkipHttpErrorCheck
@@ -151,7 +151,7 @@ function Invoke-DirectoryDownload
     {
         $ProgressPreference = 'SilentlyContinue'
 
-        Write-Verbose "Disable Progressbar because of ForceFastDownload (Hide ProgerssBar)" -Verbose
+        Write-Verbose "Disable Progressbar because of ForceFastDownload (Hide ProgressBar)" -Verbose
 
         if ($Verbose -or $ExtraVerbose)
         {
