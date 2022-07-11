@@ -18,12 +18,12 @@ $BaseCaseSeparator = "&"
 # This function is so versatile, but it's slow.
 function ConvertFrom-CamelCase([string] $InputObject)
 {
-    return [Regex]::Replace($InputObject, '(?<=.)(?=[A-Z])', $BaseCaseSeparator).ToLower()
+    return [regex]::Replace($InputObject, '(?<=.)(?=[A-Z])', $BaseCaseSeparator).ToLower()
 }
 
 function ConvertTo-CamelCase([string] $InputObject)
 {
-    $text = [Regex]::replace($InputObject, "($BaseCaseSeparator)(.)", { $args[0].Groups[2].Value.ToUpper() })
+    $text = [regex]::replace($InputObject, "($BaseCaseSeparator)(.)", { $args[0].Groups[2].Value.ToUpper() })
 
     $firstChar = $text[0].ToString().ToLower()
 
@@ -37,7 +37,7 @@ function ConvertFrom-PascalCase([string] $InputObject)
 
 function ConvertTo-PascalCase([string] $InputObject)
 {
-    return [Regex]::Replace( $InputObject, "(^|$BaseCaseSeparator)(.)", { $args[0].Groups[2].Value.ToUpper() } )
+    return [regex]::Replace( $InputObject, "(^|$BaseCaseSeparator)(.)", { $args[0].Groups[2].Value.ToUpper() } )
 }
 
 function ConvertFrom-SnakeCase([string] $InputObject)
@@ -47,7 +47,7 @@ function ConvertFrom-SnakeCase([string] $InputObject)
 
 function ConvertTo-SnakeCase([string] $InputObject)
 {
-    $text = [Regex]::Replace( $InputObject, "(^|$BaseCaseSeparator)(.)", { "_$($args[0].Groups[2].Value.ToLower())" } ).Remove(0, 1)
+    $text = [regex]::Replace( $InputObject, "(^|$BaseCaseSeparator)(.)", { "_$($args[0].Groups[2].Value.ToLower())" } ).Remove(0, 1)
 
     $firstChar = $text[0].ToString().ToLower()
 
@@ -86,7 +86,7 @@ function ConvertFrom-TrainCase([string] $InputObject)
 
 function ConvertTo-TrainCase([string] $InputObject)
 {
-    return [Regex]::Replace( $InputObject, "(^|$BaseCaseSeparator)(.)", { "-$($args[0].Groups[2].Value.ToUpper())" } ).Remove(0, 1)
+    return [regex]::Replace( $InputObject, "(^|$BaseCaseSeparator)(.)", { "-$($args[0].Groups[2].Value.ToUpper())" } ).Remove(0, 1)
 }
 
 #endregion
