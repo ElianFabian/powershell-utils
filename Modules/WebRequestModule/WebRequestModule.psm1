@@ -32,15 +32,15 @@ function Get-FileLinks([string] $Uri, [switch] $Verbose)
         $Uri += "/"
     }
 
-    $allLinksFromWebResponse = Invoke-WebRequest -Uri $Uri -Verbose:$Verbose
+    $linksFromResponse = Invoke-WebRequest -Uri $Uri -Verbose:$Verbose
 
     $linkList = New-Object Collections.Generic.List[String]
 
-    $linkCount = $allLinksFromWebResponse.Links.Count
+    $linkCount = $linksFromResponse.Links.Count
 
     for ($i = 0; $i -lt $linkCount; $i++)
     {
-        $currentLink = $allLinksFromWebResponse.Links.Item($i)
+        $currentLink = $linksFromResponse.Links.Item($i)
 
         $href = $currentLink.href
 
