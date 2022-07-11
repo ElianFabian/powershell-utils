@@ -107,7 +107,7 @@ foreach ($caseType in $caseTypeNames)
 function Convert-Case
 {
     param(
-        [Parameter(ValueFromPipeline = $true)]
+        [Parameter(ValueFromPipeline)]
         [string] $InputObject,
         [CaseType] $From, [CaseType] $To
     )
