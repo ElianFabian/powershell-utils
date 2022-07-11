@@ -10,13 +10,6 @@
 
 
 
-enum LanguageType
-{
-    CSharp;
-    Java;
-    Kotlin
-}
-
 enum CaseType
 {
     CamelCase;      # camelCase

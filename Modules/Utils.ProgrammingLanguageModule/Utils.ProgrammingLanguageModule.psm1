@@ -192,7 +192,10 @@ function ConvertFrom-FilesObject
     [string]       $Path,
     [string[]]     $ListOfPaths,
     [string]       $FieldType    = "string",
-    [LanguageType] $LanguageType = [LanguageType]::CSharp,
+
+    [ValidateSet("CSharp", "Java", "Kotlin")]
+    [string]       $LanguageType = "CSharp",
+
     [int]          $TabSize      = 4,
     [switch]       $Recurse,
     [switch]       $Relative,
@@ -202,7 +205,7 @@ function ConvertFrom-FilesObject
 
     if ($null -eq $filesObject)
     {
-        Write-Error "The files object is null"
+        Write-Error "Couldn't generate an object from the given input"
         return
     }
 
