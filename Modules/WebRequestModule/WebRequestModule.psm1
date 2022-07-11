@@ -75,9 +75,13 @@ function Invoke-DirectoryDownload_WithoutContainingFolder
     [string] $Uri,
     [string] $Destination = "./",
     [switch] $Recurse,
+    [int]    $Depth = -1,
     [switch] $ExtraVerbose,
     [switch] $SkipHttpErrorCheck
 ) {
+    if ($Depth + 1 -eq 0) { return }
+    if ($Depth -ge 0) { $Depth-- }
+
     $linkList = Get-FileLinks -Uri $Uri -Verbose:$ExtraVerbose
 
     foreach($link in $linkList)
@@ -97,7 +101,7 @@ function Invoke-DirectoryDownload_WithoutContainingFolder
             {
                 try
                 {
-                    Invoke-DirectoryDownload_WithoutContainingFolder -Uri $link -Destination "$newDestination/" @PSBoundParameters
+                    Invoke-DirectoryDownload_WithoutContainingFolder -Uri $link -Destination "$newDestination/" -Depth $Depth @PSBoundParameters
                 }
                 catch [System.Net.WebException] {}
                 catch [System.Net.Sockets.SocketException] {}
@@ -135,7 +139,11 @@ function Invoke-DirectoryDownload
     [string] $Uri,
     [string] $Destination = "./",
     [switch] $Recurse,
+
+    [ValidateRange(-1, [int]::MaxValue)]
+    [int]    $Depth = -1,
     [switch] $ExtraVerbose,
+
     [Alias("HideProgressBar")]
     [switch] $ForceFastDownload,
     [switch] $SkipHttpErrorCheck
