@@ -75,7 +75,7 @@ function Invoke-DirectoryDownload_WithoutContainingFolder
     [string] $Uri,
     [string] $Destination,
     [switch] $Recurse,
-    [int]    $Depth = -1,
+    [int]    $Depth,
     [switch] $ExtraVerbose,
     [switch] $SkipHttpErrorCheck
 ) {
