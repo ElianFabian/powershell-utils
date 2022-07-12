@@ -92,16 +92,15 @@ function Invoke-DirectoryDownload_WithoutContainingFolder
         if ($isFolder)
         {
             $folderName = Split-Path -Path $link -Leaf
+            $newFolder  = Join-Path -Path $Destination -ChildPath $folderName
 
-            $newDestination = Join-Path -Path $Destination -ChildPath $folderName
-
-            $null = New-Item -Path $newDestination -ItemType Directory
+            $null = New-Item -Path $newFolder -ItemType Directory
 
             if ($Recurse)
             {
                 try
                 {
-                    Invoke-DirectoryDownload_WithoutContainingFolder -Uri $link -Destination "$newDestination/" -Depth $Depth @PSBoundParameters
+                    Invoke-DirectoryDownload_WithoutContainingFolder -Uri $link -Destination "$newFolder/" -Depth $Depth @PSBoundParameters
                 }
                 catch [System.Net.WebException] {}
                 catch [System.Net.Sockets.SocketException] {}
@@ -116,7 +115,7 @@ function Invoke-DirectoryDownload_WithoutContainingFolder
 
                     Write-Warning "$_`nFile has no extension: $link"
 
-                    Remove-Item -Path $newDestination -Recurse
+                    Remove-Item -Path $newFolder -Recurse
 
                     $filename = $folderName
 
@@ -155,10 +154,10 @@ function Invoke-DirectoryDownload
     [switch] $ForceFastDownload,
     [switch] $SkipHttpErrorCheck
 ) {
-    $rootFolder  = $Uri | Split-Path -Leaf
-    $Destination = Join-Path -Path $Destination -ChildPath $rootFolder
+    $rootFolder       = $Uri | Split-Path -Leaf
+    $directoryFromUri = Join-Path -Path $Destination -ChildPath $rootFolder
 
-    $null = New-Item -Path $Destination -ItemType Directory
+    $null = New-Item -Path $directoryFromUri -ItemType Directory
 
     $currentProgressPreference = $ProgressPreference
 
@@ -176,7 +175,7 @@ function Invoke-DirectoryDownload
         }
     }
 
-    Invoke-DirectoryDownload_WithoutContainingFolder -Destination $Destination @PSBoundParameters
+    Invoke-DirectoryDownload_WithoutContainingFolder -Destination $directoryFromUri @PSBoundParameters
 
     $ProgressPreference = $currentProgressPreference
 }
