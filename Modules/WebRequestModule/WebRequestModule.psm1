@@ -166,11 +166,11 @@ function Invoke-DirectoryDownload
     {
         $ProgressPreference = 'SilentlyContinue'
 
-        Write-Verbose "Disable Progressbar because of ForceFastDownload (Hide ProgressBar)" -Verbose
+        Write-Verbose "Disable Progressbar because of ForceFastDownload (Hide ProgressBar)" -Verbose:$VerbosePreference
 
         if ($VerbosePreference -or $ExtraVerbose)
         {
-            Write-Verbose "Disable Verbose because of ForceFastDownload" -Verbose
+            Write-Verbose "Disable Verbose because of ForceFastDownload" -Verbose:$VerbosePreference
             $VerbosePreference = $false
             $ExtraVerbose      = $false
         }
