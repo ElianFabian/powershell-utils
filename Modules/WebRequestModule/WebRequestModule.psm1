@@ -73,7 +73,7 @@ function Invoke-FileDownload([string] $Uri, [string] $OutFile, [switch] $SkipHtt
 function Invoke-DirectoryDownload_WithoutContainingFolder
 (
     [string] $Uri,
-    [string] $Destination = "./",
+    [string] $Destination,
     [switch] $Recurse,
     [int]    $Depth = -1,
     [switch] $ExtraVerbose,
