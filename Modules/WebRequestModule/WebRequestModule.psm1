@@ -155,8 +155,8 @@ function Invoke-DirectoryDownload
     [switch] $ForceFastDownload,
     [switch] $SkipHttpErrorCheck
 ) {
-    $rootFolderName = $Uri | Split-Path -Leaf
-    $Destination    = Join-Path -Path $Destination -ChildPath $rootFolderName
+    $rootFolder  = $Uri | Split-Path -Leaf
+    $Destination = Join-Path -Path $Destination -ChildPath $rootFolder
 
     $null = New-Item -Path $Destination -ItemType Directory
 
