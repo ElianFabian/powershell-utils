@@ -187,9 +187,6 @@ function Invoke-DirectoryDownload
     .DESCRIPTION
     Executes the content of the file as powershell code from the given uri.
     To use this function you have to dot source it (insert a dot at the beginning of the function call).
-
-    .PARAMETER Uri
-    The URI of the web page.
 #>
 function Invoke-FileContentExpression([string] $Uri)
 {
