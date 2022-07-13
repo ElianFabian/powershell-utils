@@ -52,7 +52,7 @@ function Get-FileLinks([string] $Uri, [switch] $Verbose)
 
         if ($isFileOrFolderLink)
         {
-            $linkList.Add("$Uri$($href)")
+            $linkList.Add("$Uri$href")
         }
     }
 
