@@ -79,7 +79,7 @@ function Convert-ImageToAscii([string] $Path, [System.Drawing.Bitmap] $Image, [s
 
             $colorAsText = & $getColorAsTextFunction $color
 
-            $null = $pixelDataFromTextSB.Append($colorAsText)
+            $pixelDataFromTextSB.Append($colorAsText) > $null
         }
     }
 
