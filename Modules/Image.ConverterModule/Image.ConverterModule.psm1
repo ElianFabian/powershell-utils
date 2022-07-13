@@ -67,7 +67,7 @@ function Convert-ImageToAscii([string] $Path, [System.Drawing.Bitmap] $Image, [s
         $bitMap = $Image
     }
 
-    $pixelDataTextSB = [System.Text.StringBuilder]::new()
+    $pixelDataFromTextSB = [System.Text.StringBuilder]::new()
 
     $getColorAsTextFunction = $UseAlpha ? 'Get-ColorAsTextWithAlpha' : 'Get-ColorAsText'
 
@@ -79,11 +79,11 @@ function Convert-ImageToAscii([string] $Path, [System.Drawing.Bitmap] $Image, [s
 
             $colorAsText = & $getColorAsTextFunction $color
 
-            $null = $pixelDataTextSB.Append($colorAsText)
+            $null = $pixelDataFromTextSB.Append($colorAsText)
         }
     }
 
-    return $pixelDataTextSB.ToString()
+    return $pixelDataFromTextSB.ToString()
 }
 
 function Convert-AsciiToImage([string] $Path, [string] $TextValue, [switch] $UseAlpha)
@@ -94,19 +94,19 @@ function Convert-AsciiToImage([string] $Path, [string] $TextValue, [switch] $Use
         return
     }
 
-    $pixelDataText = ''
+    $pixelDataFromText = ''
 
     if ($TextValue)
     {
-        $pixelDataText = $TextValue
+        $pixelDataFromText = $TextValue
     }
-    else { $pixelDataText = Get-Content -Path $Path -Raw }
+    else { $pixelDataFromText = Get-Content -Path $Path -Raw }
 
     $charactersPerPixel = 3
 
     if ($UseAlpha) { $charactersPerPixel = 4 }
 
-    $width  = [int][math]::Ceiling( [math]::Sqrt($pixelDataText.Length / $charactersPerPixel) )
+    $width  = [int][math]::Ceiling( [math]::Sqrt($pixelDataFromText.Length / $charactersPerPixel) )
     $height = [int]$width
 
     $imageFromText = [System.Drawing.Bitmap]::new($width, $height)
@@ -119,7 +119,7 @@ function Convert-AsciiToImage([string] $Path, [string] $TextValue, [switch] $Use
         {
             $pixelIndex = ($y * $width + $x) * $charactersPerPixel
 
-            $color = & $getColorFunction $text $pixelIndex
+            $color = & $getColorFunction $pixelDataFromText $pixelIndex
 
             $imageFromText.SetPixel($x, $y, $color)
         }
