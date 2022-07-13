@@ -38,7 +38,7 @@ function Get-Color([string] $text, [int] $pixelIndex)
 
 function Get-ColorWithAlpha([string] $text, [int] $pixelIndex)
 {
-    $red   = [byte]$text[$pixelIndex + 0]
+    $red   = [byte]$text[$pixelIndex]
     $green = [byte]$text[$pixelIndex + 1]
     $blue  = [byte]$text[$pixelIndex + 2]
     $alpha = [byte]$text[$pixelIndex + 3]
@@ -69,7 +69,7 @@ function Convert-ImageToAscii([string] $Path, [System.Drawing.Bitmap] $Image, [s
 
     $pixelDataTextSB = [System.Text.StringBuilder]::new()
 
-    $getColorAsTextFunction = $UseAlpha ? "Get-ColorAsTextWithAlpha" : "Get-ColorAsText"
+    $getColorAsTextFunction = $UseAlpha ? 'Get-ColorAsTextWithAlpha' : 'Get-ColorAsText'
 
     foreach ($y in (0..($bitMap.Height - 1)))
     {
@@ -94,7 +94,7 @@ function Convert-AsciiToImage([string] $Path, [string] $TextValue, [switch] $Use
         return
     }
 
-    $pixelDataText = ""
+    $pixelDataText = ''
 
     if ($TextValue)
     {
@@ -111,7 +111,7 @@ function Convert-AsciiToImage([string] $Path, [string] $TextValue, [switch] $Use
 
     $imageFromText = [System.Drawing.Bitmap]::new($width, $height)
 
-    $getColorFunction = $UseAlpha ? "Get-ColorWithAlpha" : "Get-Color"
+    $getColorFunction = $UseAlpha ? 'Get-ColorWithAlpha' : 'Get-Color'
 
     for ($y = 0; $y -lt $height; $y++)
     {
