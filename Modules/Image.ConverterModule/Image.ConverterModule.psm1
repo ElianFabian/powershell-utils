@@ -83,7 +83,7 @@ function Convert-ImageToAscii([string] $Path, [System.Drawing.Bitmap] $Image, [s
         }
     }
 
-    return $pixelDataFromTextSB.ToString()
+    return $pixelDataFromTextSB.ToString().Replace("`0", '')
 }
 
 function Convert-AsciiToImage([string] $Path, [string] $TextValue, [switch] $UseAlpha)
