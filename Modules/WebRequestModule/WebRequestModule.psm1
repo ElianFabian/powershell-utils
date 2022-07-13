@@ -94,7 +94,7 @@ function Invoke-DirectoryDownload_WithoutContainingFolder
             $folderName = Split-Path -Path $link -Leaf
             $newFolder  = Join-Path -Path $Destination -ChildPath $folderName
 
-            $null = New-Item -Path $newFolder -ItemType Directory
+            New-Item -Path $newFolder -ItemType Directory > $null
 
             if ($Recurse)
             {
@@ -157,7 +157,7 @@ function Invoke-DirectoryDownload
     $rootFolder       = $Uri | Split-Path -Leaf
     $directoryFromUri = Join-Path -Path $Destination -ChildPath $rootFolder
 
-    $null = New-Item -Path $directoryFromUri -ItemType Directory
+    New-Item -Path $directoryFromUri -ItemType Directory > $null
 
     $currentProgressPreference = $ProgressPreference
 
