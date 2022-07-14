@@ -6,7 +6,7 @@
 
 
 
-function Get-ColorAsText([System.Drawing.Color] $color)
+function Convert-ColorToChars([System.Drawing.Color] $color)
 {
     $redChar   = [char]$color.R
     $greenChar = [char]$color.G
@@ -15,7 +15,7 @@ function Get-ColorAsText([System.Drawing.Color] $color)
     return "$redChar$greenChar$blueChar"
 }
 
-function Get-ColorAsTextWithAlpha([System.Drawing.Color] $color)
+function Convert-ColorToCharsWithAlpha([System.Drawing.Color] $color)
 {
     $redChar   = [char]$color.R
     $greenChar = [char]$color.G
@@ -69,7 +69,7 @@ function Convert-ImageToAscii([string] $Path, [System.Drawing.Bitmap] $Image, [s
 
     $pixelDataFromTextSB = [System.Text.StringBuilder]::new()
 
-    $getColorAsTextFunction = $UseAlpha ? 'Get-ColorAsTextWithAlpha' : 'Get-ColorAsText'
+    $getColorAsTextFunction = $UseAlpha ? 'Convert-ColorToCharsWithAlpha' : 'Convert-ColorToChars'
 
     foreach ($y in (0..($bitMap.Height - 1)))
     {
