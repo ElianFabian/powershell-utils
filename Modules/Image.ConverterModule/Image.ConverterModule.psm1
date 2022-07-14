@@ -100,7 +100,7 @@ function Convert-AsciiToImage([string] $Path, [string] $Text, [switch] $UseAlpha
     {
         $pixelDataFromText = $Text
     }
-    else { $pixelDataFromText = Get-Content -Path $Path -Raw }
+    else { $pixelDataFromText = Get-Content -Path $Path -Raw -ErrorAction Stop }
 
     $charactersPerPixel = 3
 
