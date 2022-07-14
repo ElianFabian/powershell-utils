@@ -86,9 +86,9 @@ function Convert-ImageToAscii([string] $Path, [System.Drawing.Bitmap] $Image, [s
     return $pixelDataFromTextSB.ToString().Replace("`0", '')
 }
 
-function Convert-AsciiToImage([string] $Path, [string] $TextValue, [switch] $UseAlpha)
+function Convert-AsciiToImage([string] $Path, [string] $Text, [switch] $UseAlpha)
 {
-    if ($Path -and $TextValue)
+    if ($Path -and $Text)
     {
         Write-Error "Can't use both Path and TexValue"
         return
@@ -96,9 +96,9 @@ function Convert-AsciiToImage([string] $Path, [string] $TextValue, [switch] $Use
 
     $pixelDataFromText = ''
 
-    if ($TextValue)
+    if ($Text)
     {
-        $pixelDataFromText = $TextValue
+        $pixelDataFromText = $Text
     }
     else { $pixelDataFromText = Get-Content -Path $Path -Raw }
 
