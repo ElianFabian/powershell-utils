@@ -90,7 +90,7 @@ function Convert-AsciiToImage([string] $Path, [string] $Text, [switch] $UseAlpha
 {
     if ($Path -and $Text)
     {
-        Write-Error "Can't use both Path and TexValue"
+        Write-Error "Can't use both Path and Text"
         return
     }
 
