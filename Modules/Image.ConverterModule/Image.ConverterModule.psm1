@@ -25,28 +25,32 @@ function Convert-ColorToCharsWithAlpha([System.Drawing.Color] $color)
     return "$redChar$greenChar$blueChar$alphaChar"
 }
 
-function Get-Color([string] $text, [int] $pixelIndex)
-{
-    $red   = [byte]$text[$pixelIndex]
-    $green = [byte]$text[$pixelIndex + 1]
-    $blue  = [byte]$text[$pixelIndex + 2]
+#region As passing arrays as parameters is too slow it's not worth to use these functions
 
-    $color = [System.Drawing.Color]::FromArgb($red, $green, $blue)
+# function Get-Color([byte[]] $PixelBytes, [int] $Index)
+# {
+#     $red   = $PixelBytes[$Index]
+#     $green = $PixelBytes[$Index + 1]
+#     $blue  = $PixelBytes[$Index + 2]
 
-    return $color
-}
+#     $color = [System.Drawing.Color]::FromArgb($red, $green, $blue)
 
-function Get-ColorWithAlpha([string] $text, [int] $pixelIndex)
-{
-    $red   = [byte]$text[$pixelIndex]
-    $green = [byte]$text[$pixelIndex + 1]
-    $blue  = [byte]$text[$pixelIndex + 2]
-    $alpha = [byte]$text[$pixelIndex + 3]
+#     return $color
+# }
 
-    $color = [System.Drawing.Color]::FromArgb($alpha, $red, $green, $blue)
+# function Get-ColorWithAlpha([string] $PixelBytes, [int] $Index)
+# {
+#     $red   = [byte]$PixelBytes[$Index]
+#     $green = [byte]$PixelBytes[$Index + 1]
+#     $blue  = [byte]$PixelBytes[$Index + 2]
+#     $alpha = [byte]$PixelBytes[$Index + 3]
 
-    return $color
-}
+#     $color = [System.Drawing.Color]::FromArgb($alpha, $red, $green, $blue)
+
+#     return $color
+# }
+
+#endregion
 
 
 
@@ -94,34 +98,59 @@ function Convert-AsciiToImage([string] $Path, [string] $Text, [switch] $UseAlpha
         return
     }
 
-    $pixelDataFromText = ''
+    [byte[]] $pixelBytesFromText = $null
 
     if ($Text)
     {
-        $pixelDataFromText = $Text
+        $encoding = [system.Text.Encoding]::ASCII
+        $pixelBytesFromText = $encoding.GetBytes($Text)
     }
-    else { $pixelDataFromText = Get-Content -Path $Path -Raw -ErrorAction Stop }
+    else { $pixelBytesFromText = [System.IO.File]::ReadAllBytes($Path) }
 
     $charactersPerPixel = 3
 
     if ($UseAlpha) { $charactersPerPixel = 4 }
 
-    $width  = [int][math]::Ceiling( [math]::Sqrt($pixelDataFromText.Length / $charactersPerPixel) )
+    $width  = [int][math]::Ceiling( [math]::Sqrt($pixelBytesFromText.Length / $charactersPerPixel) )
     $height = [int]$width
 
     $imageFromText = [System.Drawing.Bitmap]::new($width, $height)
 
-    $getColorFunction = $UseAlpha ? 'Get-ColorWithAlpha' : 'Get-Color'
-
-    for ($y = 0; $y -lt $height; $y++)
+    if ($UseAlpha)
     {
-        for ($x = 0; $x -lt $width; $x++)
+        for ($y = 0; $y -lt $height; $y++)
         {
-            $pixelIndex = ($y * $width + $x) * $charactersPerPixel
+            for ($x = 0; $x -lt $width; $x++)
+            {
+                $pixelIndex = ($y * $width + $x) * $charactersPerPixel
 
-            $color = & $getColorFunction $pixelDataFromText $pixelIndex
+                $red   = $pixelBytesFromText[$pixelIndex]
+                $green = $pixelBytesFromText[$pixelIndex + 1]
+                $blue  = $pixelBytesFromText[$pixelIndex + 2]
+                $alpha = $pixelBytesFromText[$pixelIndex + 3]
+            
+                $color = [System.Drawing.Color]::FromArgb($alpha, $red, $green, $blue)
 
-            $imageFromText.SetPixel($x, $y, $color)
+                $imageFromText.SetPixel($x, $y, $color)
+            }
+        }
+    }
+    else
+    {
+        for ($y = 0; $y -lt $height; $y++)
+        {
+            for ($x = 0; $x -lt $width; $x++)
+            {
+                $pixelIndex = ($y * $width + $x) * $charactersPerPixel
+
+                $red   = $pixelBytesFromText[$pixelIndex]
+                $green = $pixelBytesFromText[$pixelIndex + 1]
+                $blue  = $pixelBytesFromText[$pixelIndex + 2]
+
+                $color = [System.Drawing.Color]::FromArgb($red, $green, $blue)
+
+                $imageFromText.SetPixel($x, $y, $color)
+            }
         }
     }
 
