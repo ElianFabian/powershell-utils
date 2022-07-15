@@ -6,26 +6,26 @@
 
 
 
-function Convert-ColorToChars([System.Drawing.Color] $color)
-{
-    $redChar   = [char]$color.R
-    $greenChar = [char]$color.G
-    $blueChar  = [char]$color.B
+#region As passing arrays and structs as parameters is too slow it's not worth to use these functions
 
-    return "$redChar$greenChar$blueChar"
-}
+# function Convert-ColorToChars([System.Drawing.Color] $color)
+# {
+#     $redChar   = [char]$color.R
+#     $greenChar = [char]$color.G
+#     $blueChar  = [char]$color.B
 
-function Convert-ColorToCharsWithAlpha([System.Drawing.Color] $color)
-{
-    $redChar   = [char]$color.R
-    $greenChar = [char]$color.G
-    $blueChar  = [char]$color.B
-    $alphaChar = [char]$color.A
+#     return "$redChar$greenChar$blueChar"
+# }
 
-    return "$redChar$greenChar$blueChar$alphaChar"
-}
+# function Convert-ColorToCharsWithAlpha([System.Drawing.Color] $color)
+# {
+#     $redChar   = [char]$color.R
+#     $greenChar = [char]$color.G
+#     $blueChar  = [char]$color.B
+#     $alphaChar = [char]$color.A
 
-#region As passing arrays as parameters is too slow it's not worth to use these functions
+#     return "$redChar$greenChar$blueChar$alphaChar"
+# }
 
 # function Get-Color([byte[]] $PixelBytes, [int] $Index)
 # {
@@ -73,17 +73,41 @@ function Convert-ImageToAscii([string] $Path, [System.Drawing.Bitmap] $Image, [s
 
     $pixelDataFromTextSB = [System.Text.StringBuilder]::new()
 
-    $getColorAsTextFunction = $UseAlpha ? 'Convert-ColorToCharsWithAlpha' : 'Convert-ColorToChars'
-
-    foreach ($y in (0..($bitMap.Height - 1)))
+    if ($UseAlpha)
     {
-        foreach ($x in (0..($bitMap.Width - 1)))
+        foreach ($y in (0..($bitMap.Height - 1)))
         {
-            $color = $bitMap.GetPixel($x, $y)
+            foreach ($x in (0..($bitMap.Width - 1)))
+            {
+                $color = $bitMap.GetPixel($x, $y)
 
-            $colorAsText = & $getColorAsTextFunction $color
+                $redChar   = [char]$color.R
+                $greenChar = [char]$color.G
+                $blueChar  = [char]$color.B
+                $alphaChar = [char]$color.A
 
-            $pixelDataFromTextSB.Append($colorAsText) > $null
+                $colorAsText = "$redChar$greenChar$blueChar$alphaChar"
+
+                $pixelDataFromTextSB.Append($colorAsText) > $null
+            }
+        }
+    }
+    else
+    {
+        foreach ($y in (0..($bitMap.Height - 1)))
+        {
+            foreach ($x in (0..($bitMap.Width - 1)))
+            {
+                $color = $bitMap.GetPixel($x, $y)
+
+                $redChar   = [char]$color.R
+                $greenChar = [char]$color.G
+                $blueChar  = [char]$color.B
+
+                $colorAsText = "$redChar$greenChar$blueChar"
+
+                $pixelDataFromTextSB.Append($colorAsText) > $null
+            }
         }
     }
 
