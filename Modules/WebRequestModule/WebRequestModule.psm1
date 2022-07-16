@@ -85,7 +85,7 @@ function Invoke-DirectoryDownload_WithoutContainingFolder
     {
         $isFolder = $link.EndsWith("/")
 
-        # We assume that if the link ends with a slash it's a folder, if it doesn't end with a slash
+        # We assume that the link ends with a slash if it's a folder, if it doesn't end with a slash
         if ($isFolder)
         {
             $folderName = Split-Path -Path $link -Leaf
