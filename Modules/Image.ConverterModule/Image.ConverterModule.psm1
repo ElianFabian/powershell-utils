@@ -6,54 +6,6 @@
 
 
 
-#region As passing arrays and structs as parameters is too slow it's not worth to use these functions
-
-# function Convert-ColorToChars([System.Drawing.Color] $color)
-# {
-#     $redChar   = [char]$color.R
-#     $greenChar = [char]$color.G
-#     $blueChar  = [char]$color.B
-
-#     return "$redChar$greenChar$blueChar"
-# }
-
-# function Convert-ColorToCharsWithAlpha([System.Drawing.Color] $color)
-# {
-#     $redChar   = [char]$color.R
-#     $greenChar = [char]$color.G
-#     $blueChar  = [char]$color.B
-#     $alphaChar = [char]$color.A
-
-#     return "$redChar$greenChar$blueChar$alphaChar"
-# }
-
-# function Get-Color([byte[]] $PixelBytes, [int] $Index)
-# {
-#     $red   = $PixelBytes[$Index]
-#     $green = $PixelBytes[$Index + 1]
-#     $blue  = $PixelBytes[$Index + 2]
-
-#     $color = [System.Drawing.Color]::FromArgb($red, $green, $blue)
-
-#     return $color
-# }
-
-# function Get-ColorWithAlpha([string] $PixelBytes, [int] $Index)
-# {
-#     $red   = [byte]$PixelBytes[$Index]
-#     $green = [byte]$PixelBytes[$Index + 1]
-#     $blue  = [byte]$PixelBytes[$Index + 2]
-#     $alpha = [byte]$PixelBytes[$Index + 3]
-
-#     $color = [System.Drawing.Color]::FromArgb($alpha, $red, $green, $blue)
-
-#     return $color
-# }
-
-#endregion
-
-
-
 function Convert-ImageToAscii([string] $Path, [System.Drawing.Bitmap] $Image, [switch] $UseAlpha)
 {
     if ($Path -and $Image)
