@@ -9,7 +9,7 @@
 # Links of interest:
 # http://svn.apache.org/repos/asf/ (For testing purposes)
 
-$innerHTMLRegex = '((?<=>)(.*?)(?=<))'
+
 
 <#
     .SYNOPSIS
@@ -37,6 +37,8 @@ function Get-FileLinks([string] $Uri, [switch] $Verbose)
     $linkList = New-Object Collections.Generic.List[String]
 
     $linkCount = $linksFromResponse.Links.Count
+
+    $innerHTMLRegex = '((?<=>)(.*?)(?=<))'
 
     for ($i = 0; $i -lt $linkCount; $i++)
     {
@@ -70,39 +72,51 @@ function Invoke-FileDownload([string] $Uri, [string] $OutFile, [switch] $SkipHtt
 
 # This is the prive version of Invoke-DirectoryDownload, we have to define the other function in other to
 # make the files be contained in the folder given in the Uri.
-function Invoke-DirectoryDownload_WithoutContainingFolder
+function Invoke-DirectoryDownload_WithoutRootFolder
 (
     [string] $Uri,
     [string] $Destination,
     [switch] $Recurse,
     [uint]   $Depth,
     [switch] $ExtraVerbose,
-    [switch] $SkipHttpErrorCheck
+    [switch] $SkipHttpErrorCheck,
+    [switch] $UseParallelDownload,
+    [int]    $ThrottleLimit
 ) {
+    if (-not $UseParallelDownload) { $ThrottleLimit = 1 }
+
+    $getFileLinksFunction = ${function:Get-FileLinks}.ToString()
+    $invokeDirectoryDownload_WithoutRootFolderFunction = ${function:Invoke-DirectoryDownload_WithoutRootFolder}.ToString()
+    $invokeFileDownloadFunction = ${function:Invoke-FileDownload}.ToString()
+
     $linkList = Get-FileLinks -Uri $Uri -Verbose:$ExtraVerbose
 
-    foreach($link in $linkList)
-    {
+    $linkList | ForEach-Object -ThrottleLimit $ThrottleLimit -Parallel { $link = $_
+
+        ${function:Get-FileLinks}       = $using:getFileLinksFunction
+        ${function:Invoke-FileDownload} = $using:invokeFileDownloadFunction
+        ${function:Invoke-DirectoryDownload_WithoutRootFolder} = $using:invokeDirectoryDownload_WithoutRootFolderFunction
+
         $isFolder = $link.EndsWith("/")
 
         # We assume that the link ends with a slash if it's a folder, if it doesn't end with a slash
         if ($isFolder)
         {
             $folderName = Split-Path -Path $link -Leaf
-            $newFolder  = Join-Path -Path $Destination -ChildPath $folderName
+            $newFolder  = Join-Path -Path $using:Destination -ChildPath $folderName
 
             New-Item -Path $newFolder -ItemType Directory > $null
 
-            if (-not $Recurse -and $Depth -eq 0) { continue }
+            if (-not $using:Recurse -and $using:Depth -eq 0) { continue }
 
-            if ($Recurse -or $Depth -ge 0)
+            if ($using:Recurse -or $using:Depth -ge 0)
             {
                 try
                 {
-                    $newDepth = $Depth - 1
+                    $newDepth = $using:Depth - 1
                     if ($newDepth -lt 0) { $newDepth = 0 }
 
-                    Invoke-DirectoryDownload_WithoutContainingFolder -Uri $link -Destination "$newFolder/" -Depth $newDepth @PSBoundParameters
+                    Invoke-DirectoryDownload_WithoutRootFolder -Uri $link -Destination "$newFolder/" -Depth $newDepth @using:PSBoundParameters
                 }
                 catch [System.Net.WebException] {}
                 catch [System.Net.Sockets.SocketException] {}
@@ -121,7 +135,7 @@ function Invoke-DirectoryDownload_WithoutContainingFolder
 
                     $filename = $folderName
 
-                    Invoke-FileDownload -Uri $link -OutFile $Destination/$filename @PSBoundParameters
+                    Invoke-FileDownload -Uri $link -OutFile $using:Destination/$filename @using:PSBoundParameters
                 }
             }
         }
@@ -129,9 +143,11 @@ function Invoke-DirectoryDownload_WithoutContainingFolder
         {
             $filename = Split-Path -Path $link -Leaf
 
-            Invoke-FileDownload -Uri $link -OutFile $Destination/$filename @PSBoundParameters
+            Invoke-FileDownload -Uri $link -OutFile $using:Destination/$filename @using:PSBoundParameters
         }
     }
+
+    Start-Sleep -Milliseconds 1
 }
 
 <#
@@ -153,7 +169,9 @@ function Invoke-DirectoryDownload
 
     [Alias("HideProgressBar")]
     [switch] $ForceFastDownload,
-    [switch] $SkipHttpErrorCheck
+    [switch] $SkipHttpErrorCheck,
+    [switch] $UseParallelDownload,
+    [int]    $ThrottleLimit = 5
 ) {
     $rootFolder       = $Uri | Split-Path -Leaf
     $directoryFromUri = Join-Path -Path $Destination -ChildPath $rootFolder
@@ -176,7 +194,7 @@ function Invoke-DirectoryDownload
         }
     }
 
-    Invoke-DirectoryDownload_WithoutContainingFolder -Destination $directoryFromUri @PSBoundParameters
+    Invoke-DirectoryDownload_WithoutRootFolder -Destination $directoryFromUri -ThrottleLimit $ThrottleLimit @PSBoundParameters
 
     $ProgressPreference = $currentProgressPreference
 }
