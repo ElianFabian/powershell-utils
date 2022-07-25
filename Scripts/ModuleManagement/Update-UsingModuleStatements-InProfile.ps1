@@ -1,4 +1,4 @@
-# Update-UsingModuleStatements-IntoProfile.ps1
+# Update-UsingModuleStatements-InProfile.ps1
 
 
 

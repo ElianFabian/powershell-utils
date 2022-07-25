@@ -1,4 +1,4 @@
-# Remove-UsingModuleStatements-IntoProfile.ps1
+# Remove-UsingModuleStatements-InProfile.ps1
 
 
 
