@@ -15,7 +15,6 @@ $BaseCaseSeparator = "&"
 
 #region Case Functions
 
-# This function is so versatile, but it's slow.
 function ConvertFrom-CamelCase([string] $InputObject)
 {
     return [regex]::Replace($InputObject, '(?<=.)(?=[A-Z])', $BaseCaseSeparator).ToLower()
