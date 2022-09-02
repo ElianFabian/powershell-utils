@@ -71,7 +71,7 @@ function Get-FilesObjectGroupByExtension
         $currentLocation = Get-Location
 
         Set-Location $RelativeTo
-        $pathList = ($pathList | Resolve-Path -Relative )
+        $pathList = ($pathList | Resolve-Path -Relative)
         Set-Location $currentLocation
     }
 
