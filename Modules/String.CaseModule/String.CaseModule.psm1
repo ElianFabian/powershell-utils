@@ -13,6 +13,17 @@
 $BaseCaseSeparator = "&"
 
 
+enum CaseType
+{
+	CamelCase      # camelCase
+	PascalCase     # PascalCase
+	SnakeCase      # snake_case
+	UpperSnakeCase # SNAKE_CASE
+	KebabCase      # kebab-case
+	TrainCase      # Train-Case
+}
+
+
 #region Case Functions
 
 function ConvertFrom-CamelCase([string] $InputObject)
