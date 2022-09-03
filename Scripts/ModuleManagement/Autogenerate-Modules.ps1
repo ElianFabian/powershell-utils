@@ -45,4 +45,4 @@ function New-AutogenaratedModule($ModuleName, $DataTypeRegex, $DataTypeName)
 
 
 
-New-AutogenaratedModule -ModuleName "EnumModule" -DataTypeName "enum" -DataTypeRegex "enum \w+[\s]*\n?{[\S\s]*?}"
+New-AutogenaratedModule -ModuleName "EnumModule" -DataTypeName "enum" -DataTypeRegex "enum \w+\s*\n?{[\S\s]*?}"
