@@ -6,7 +6,7 @@
 
 
 
-# Generats the enums from the modules to create a file to add them and then import then with the using statement.
+# Generates the enums from the modules to create a file to add them and then import then with the using statement.
 # We do this because in Powershell you can't export an enum.
 
 
