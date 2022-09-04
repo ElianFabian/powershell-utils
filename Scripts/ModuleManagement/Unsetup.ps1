@@ -6,5 +6,5 @@
 
 
 
-& ./Remove-UsingModuleStatements-InProfile.ps1
-& ./Remove-Modules-InEnvPSModulePath.ps1
+& ./Remove-UsingStatements-FromProfile.ps1
+& ./Remove-Modules-FromEnvPSModulePath.ps1

@@ -8,4 +8,4 @@
 
 & ./Autogenerate-Modules.ps1
 & ./Import-Modules-IntoEnvPSModulePath.ps1
-& ./Update-UsingModuleStatements-InProfile.ps1
+& ./Import-UsingModuleStatements-IntoProfile.ps1
