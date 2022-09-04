@@ -5,12 +5,15 @@
 # From repository: https://github.com/ElianFabian/powershell-utils
 
 
-
+<#
+    .SYNOPSIS
+    Inserts or updates a value. To update the value it needs the value's regex value's key to identify it.
+#>
 param(
-    [string] $ValueToInsertOrUpdate,
-    [string] $ValueRegex,
-    [string] $ValueKey,
-    [string] $SourceString,
+    [string]      $ValueToInsertOrUpdate,
+    [string]      $ValueRegex,
+    [string]      $ValueKey,
+    [string]      $SourceString,
     [Scriptblock] $InsertValue = {
         param($sourceString, $valueToInsert)
 
