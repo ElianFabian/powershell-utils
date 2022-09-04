@@ -30,14 +30,11 @@ param(
 
 $textMatches = ($SourceString | Select-String -Pattern $ValueRegex -AllMatches).Matches
 
-#region Add
-if ($null -eq $textMatches)
+if ($null -eq $textMatches) # Insert
 {
     return $InsertValue.Invoke($SourceString, $ValueToInsertOrUpdate)
 }
-#endregion
-#region Update
-else
+else # Update
 {
     foreach ($match in $textMatches)
     {
@@ -46,4 +43,3 @@ else
         return $SourceString -replace $match.Value, $UpdateValue.Invoke($ValueToInsertOrUpdate)
     }
 }
-#endregion
