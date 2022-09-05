@@ -6,7 +6,7 @@
 
 
 
-Import-Module -Name "../../Modules/String.ManipulationModule/String.ManipulationModule.psm1" -WarningAction SilentlyContinue
+Import-Module -Name "../../Modules/String.Manipulation/String.Manipulation.psm1" -WarningAction SilentlyContinue
 
 
 

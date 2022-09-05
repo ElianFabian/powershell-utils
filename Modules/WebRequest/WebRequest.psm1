@@ -1,4 +1,4 @@
-# WebRequestModule.psm1
+# WebRequest.psm1
 
 
 

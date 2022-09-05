@@ -1,4 +1,4 @@
-# Image.ConverterModule.psm1
+# Image.Converter.psm1
 
 
 

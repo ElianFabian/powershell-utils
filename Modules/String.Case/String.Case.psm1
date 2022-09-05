@@ -1,4 +1,4 @@
-# String.CaseModule.psm1
+# String.Case.psm1
 
 
 
