@@ -37,8 +37,9 @@ function Convert-Case
 {
     param(
         [Parameter(ValueFromPipeline)]
-        [string] $InputObject,
-        [CaseType] $From, [CaseType] $To
+        [string]   $InputObject,
+        [CaseType] $From,
+        [CaseType] $To
     )
 
     process { & $caseFunctions["to$To"] (& $caseFunctions["from$From"] $InputObject) }
