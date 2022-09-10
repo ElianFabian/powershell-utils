@@ -2,10 +2,6 @@
 
 
 
-# From repository: https://github.com/ElianFabian/powershell-utils
-
-
-
 # We have a base case from which we're going to convert from and convert to.
 # Base case: something&and&something&else
 

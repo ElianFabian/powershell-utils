@@ -2,10 +2,6 @@
 
 
 
-# From repository: https://github.com/ElianFabian/powershell-utils
-
-
-
 Import-Module -Name "../../Modules/String.Manipulation/String.Manipulation.psm1" -WarningAction SilentlyContinue
 
 

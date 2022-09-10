@@ -2,10 +2,6 @@
 
 
 
-# From repository: https://github.com/ElianFabian/powershell-utils
-
-
-
 <#
     .DESCRIPTION
     Converts an object into a string in properties file format.

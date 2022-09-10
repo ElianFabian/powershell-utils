@@ -2,10 +2,6 @@
 
 
 
-# From repository: https://github.com/ElianFabian/powershell-utils
-
-
-
 $userModulePath = $env:PSModulePath.Split(";")[0]
 
 $modulesFromRepository   = (Get-ChildItem -Path ..\..\Modules\*).Name

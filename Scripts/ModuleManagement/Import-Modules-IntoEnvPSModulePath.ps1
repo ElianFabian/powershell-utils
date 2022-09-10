@@ -2,10 +2,6 @@
 
 
 
-# From repository: https://github.com/ElianFabian/powershell-utils
-
-
-
 $userModulePath = $env:PSModulePath.Split(";")[0]
 
 # In case the folder doesn't exist, create it (This is for Porweshell 7 support)

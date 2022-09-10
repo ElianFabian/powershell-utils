@@ -2,10 +2,6 @@
 
 
 
-# From repository: https://github.com/ElianFabian/powershell-utils
-
-
-
 function Convert-ImageToAscii([string] $Path, [System.Drawing.Bitmap] $Image, [switch] $UseAlpha)
 {
     if ($Path -and $Image)
