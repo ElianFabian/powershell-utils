@@ -21,7 +21,7 @@ $BaseCaseSeparator = "&"
 
 $caseFunctions = New-Object System.Collections.Generic.Dictionary'[string, string]'
 
-Get-ChildItem -Path "$PSScriptRoot/Private/Functions/Enum" | ForEach-Object {
+Get-ChildItem -Path "$PSScriptRoot/Private/Enum" | ForEach-Object {
     . $_.FullName
 
     $caseName = $_.BaseName
