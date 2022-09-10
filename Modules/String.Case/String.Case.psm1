@@ -3,7 +3,8 @@
 
 
 # We have a base case from which we're going to convert from and convert to.
-# Base case: something&and&something&else
+# Base case:            something&and&something&else
+# This is also allowed: nicolasCage&is&an$actor
 
 
 # Used in Enum/* scripts
