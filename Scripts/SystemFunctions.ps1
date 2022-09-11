@@ -40,7 +40,7 @@ function Invoke-ScreenShot([string] $Path = ".", [string] $Name)
 
     if (-not $Name)
     {
-        $newPath = "$(Resolve-Path $Path)/screenshot $(Get-Date -Format 'yyyy-MM-dd, hh;mm;ss.ff').jpg"
+        $newPath = "$(Resolve-Path $Path)/screenshot $(Get-Date -Format 'yyyy-MM-dd, hh-mm-ss.ff').jpg"
     }
 
     $bitmap.Save($newPath)
