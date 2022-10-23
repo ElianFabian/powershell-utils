@@ -45,3 +45,7 @@ function Invoke-ScreenShot([string] $Path = ".", [string] $Name)
 
     $bitmap.Save($newPath)
 }
+
+
+
+https://superuser.com/questions/1324007/setting-window-size-and-position-in-powershell-5-and-6
