@@ -2,17 +2,17 @@
 
 
 
-function Convert-ImageToAscii([string] $Path, [System.Drawing.Bitmap] $Image, [switch] $UseAlpha)
+function Convert-ImageToAscii(
+    [Parameter(ParameterSetName="A")]
+    [string] $Path,
+    [Parameter(ParameterSetName="B")]
+    [System.Drawing.Bitmap] $Image,
+    [switch] $UseAlpha
+    )
 {
-    if ($Path -and $Image)
-    {
-       Write-Error "Can't use both Path and Image"
-       return
-    }
-
     if ($Path)
     {
-        $bitMap = [System.Drawing.Bitmap]::FromFile($Path)
+        $bitMap = [System.Drawing.Bitmap]::FromFile((Resolve-Path $Path))
     }
     elseif ($Image)
     {
@@ -62,14 +62,13 @@ function Convert-ImageToAscii([string] $Path, [System.Drawing.Bitmap] $Image, [s
     return $pixelDataFromTextSB.ToString().Replace("`0", '')
 }
 
-function Convert-AsciiToImage([string] $Path, [string] $Text, [switch] $UseAlpha)
-{
-    if ($Path -and $Text)
-    {
-        Write-Error "Can't use both Path and Text"
-        return
-    }
-
+function Convert-AsciiToImage(
+    [Parameter(ParameterSetName="A")]
+    [string] $Path,
+    [Parameter(ParameterSetName="B")]
+    [string] $Text,
+    [switch] $UseAlpha
+) {
     [byte[]] $pixelBytesFromText = $null
 
     if ($Text)
@@ -77,11 +76,9 @@ function Convert-AsciiToImage([string] $Path, [string] $Text, [switch] $UseAlpha
         $encoding = [system.Text.Encoding]::ASCII
         $pixelBytesFromText = $encoding.GetBytes($Text)
     }
-    else { $pixelBytesFromText = [System.IO.File]::ReadAllBytes($Path) }
+    else { $pixelBytesFromText = [System.IO.File]::ReadAllBytes((Resolve-Path $Path)) }
 
-    $charactersPerPixel = 3
-
-    if ($UseAlpha) { $charactersPerPixel = 4 }
+    $charactersPerPixel = $UseAlpha ? 4 : 3
 
     $width  = [int][math]::Ceiling( [math]::Sqrt($pixelBytesFromText.Length / $charactersPerPixel) )
     $height = [int]$width
