@@ -93,3 +93,7 @@ function Convert-ItemWithRegex
 
     return $resultSB.ToString()
 }
+
+
+
+Export-ModuleMember -Function *-*
