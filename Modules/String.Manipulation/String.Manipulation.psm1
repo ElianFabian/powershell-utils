@@ -52,7 +52,7 @@ function InsertOrUpdate-ValueInString
     .PARAMETER OnCreateItem
     An script block which $args contains all the groups defined in $ItemPattern and returns an item as string.  
     .EXAMPLE
-    Convert-ItemToItemWithRegex `
+    Convert-ItemWithRegex `
         -InputObject @"
         <string name="name">Alice</string>
         <string name="age">25</string>
@@ -65,7 +65,7 @@ function InsertOrUpdate-ValueInString
         name = "Alice"
         age = 25
 #>
-function Convert-ItemToItemWithRegex
+function Convert-ItemWithRegex
 (
     [string]      $InputObject,
     [string]      $ItemPattern,
