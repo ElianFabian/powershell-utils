@@ -6,16 +6,16 @@
     .SYNOPSIS
     Inserts or updates a value. To update the value it needs the value's regex value's key to identify it.
 #>
-function AddOrUpdate-ValueInString
+function InsertOrUpdate-ValueInString
 (
-    [string]      $ValueToAddOrUpdate,
-    [string]      $ValueRegex,
+    [string]      $ValueToInsertOrUpdate,
+    [string]      $ValuePattern,
     [string]      $ValueKey,
     [string]      $SourceString,
-    [Scriptblock] $AddValue = {
-        param($sourceString, $valueToAdd)
+    [Scriptblock] $InsertValue = {
+        param($sourceString, $valueToInsert)
 
-        return $sourceString + $valueToAdd
+        return $sourceString + $valueToInsert
     },
     [scriptblock] $UpdateValue = {
         param($updatedText)
@@ -23,11 +23,11 @@ function AddOrUpdate-ValueInString
         return $updatedText
     }
 ) {
-    $textMatches = ($SourceString | Select-String -Pattern $ValueRegex -AllMatches).Matches
+    $textMatches = ($SourceString | Select-String -Pattern $ValuePattern -AllMatches).Matches
 
-    if ($null -eq $textMatches) # Add
+    if ($null -eq $textMatches) # Insert
     {
-        return $AddValue.Invoke($SourceString, $ValueToAddOrUpdate)
+        return $InsertValue.Invoke($SourceString, $ValueToInsertOrUpdate)
     }
     else # Update
     {
@@ -35,7 +35,7 @@ function AddOrUpdate-ValueInString
         {
             if (-not $match.Value.Contains($ValueKey)) { continue }
 
-            return $SourceString -replace $match.Value, $UpdateValue.Invoke($ValueToAddOrUpdate)
+            return $SourceString -replace $match.Value, $UpdateValue.Invoke($ValueToInsertOrUpdate)
         }
     }
 }
