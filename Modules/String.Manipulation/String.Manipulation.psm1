@@ -56,7 +56,7 @@ function InsertOrUpdate-ValueInString
         -InputObject @"
         <string name="name">Alice</string>
         <string name="age">25</string>
-        "@ `
+    "@ `
         -ItemPattern '<string name="(.+)">(.+)<\/string>' `
         -OnCreateItem { $name, $content = $args  
             "$name = ""$content"""
