@@ -128,5 +128,4 @@ function Convert-AsciiToImage(
 
 
 
-Export-ModuleMember -Function Convert-ImageToAscii
-Export-ModuleMember -Function Convert-AsciiToImage
+Export-ModuleMember -Function *-*
