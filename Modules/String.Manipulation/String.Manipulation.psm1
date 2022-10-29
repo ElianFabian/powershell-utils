@@ -83,7 +83,7 @@ function Convert-ItemWithRegex
     {
         $_first, $groups = $match.Groups | Select-Object -ExpandProperty Value
 
-        $newItem = & $OnCreateItem @groups
+        $newItem = $OnCreateItem.Invoke($groups)
 
         $resultSB.Append("$separator$newItem") > $null
 
