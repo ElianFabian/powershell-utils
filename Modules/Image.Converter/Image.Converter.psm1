@@ -8,8 +8,7 @@ function Convert-ImageToAscii(
     [Parameter(ParameterSetName="B")]
     [System.Drawing.Bitmap] $Image,
     [switch] $UseAlpha
-    )
-{
+) {
     if ($Path)
     {
         $bitMap = [System.Drawing.Bitmap]::FromFile((Resolve-Path $Path))
