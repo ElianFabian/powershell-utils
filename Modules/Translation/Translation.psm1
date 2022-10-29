@@ -7,7 +7,7 @@ $global:languagesCsv = ConvertFrom-Csv -InputObject ( Get-Content "$PSScriptRoot
 $languagesToCodes = @{}
 foreach($row in $global:languagesCsv)
 {
-    $languagesToCodes.$($row.Language) = $row.Code
+    $languagesToCodes[$row.Language] = $row.Code
 }
 
 class Language : System.Management.Automation.IValidateSetValuesGenerator
@@ -29,37 +29,31 @@ class Language : System.Management.Automation.IValidateSetValuesGenerator
     Translated the given input from a language to another language.
 
     .PARAMETER InputObject
-    Text to translate
+    Text to translate.
 
     .PARAMETER $SourceLanguage
     Source language in English or language code.
 
     .PARAMETER $TargetLanguage
     Target language in English or language code.
+
+    .NOTES
+    This function uses the free google translate api, if you try to do so many calls it will block (you will probably only find issues when doing parallelism).
 #>
-function Convert-Language(
+function Invoke-LanguageTranslation(
     [string] $InputObject,
     [ValidateSet([Language])]
     [string] $SourceLanguage = 'auto',
     [ValidateSet([Language])]
     [string] $TargetLanguage
 ) {
-    if ($languagesToCodes.ContainsKey(($SourceLanguage)))
-    {
-        $sourceLanguageCode = $languagesToCodes[$SourceLanguage]
-    }
-    else { $sourceLanguageCode = $SourceLanguage }
-
-    if ($languagesToCodes.ContainsKey(($TargetLanguage)))
-    {
-        $targetLanguageCode = $languagesToCodes[$TargetLanguage]
-    }
-    else { $targetLanguageCode = $TargetLanguage }
-
+    $sourceLanguageCode, $targetLanguageCode = TryConvertLanguageToCode $SourceLanguage $TargetLanguage
 
     $translationSB = [System.Text.StringBuilder]::new()
 
-    $uri = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=$sourceLanguageCode&tl=$targetLanguageCode&dt=t&q=$([uri]::EscapeDataString($InputObject))"
+    $query = [uri]::EscapeDataString($InputObject)
+
+    $uri = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=$sourceLanguageCode&tl=$targetLanguageCode&dt=t&q=$query"
 
     $response = (Invoke-WebRequest -Uri $uri -Method Get).Content | ConvertFrom-Json
 
@@ -71,6 +65,22 @@ function Convert-Language(
     return $translationSB.ToString()
 }
 
+function TryConvertLanguageToCode([string] $SourceLanguage, [string] $TargetLanguage)
+{
+    $languageCodes = @($SourceLanguage, $TargetLanguage)
+
+    if ($languagesToCodes.ContainsKey(($SourceLanguage)))
+    {
+        $languageCodes[0] = $languagesToCodes[$SourceLanguage]
+    }
+    if ($languagesToCodes.ContainsKey(($TargetLanguage)))
+    {
+        $languageCodes[1] = $languagesToCodes[$TargetLanguage]
+    }
+
+    return $languageCodes
+}
 
 
-Export-ModuleMember -Function Convert-Language
+
+Export-ModuleMember -Function *-*
