@@ -5,10 +5,10 @@
 
 function ConvertFrom-UpperSnakeCase([string] $InputObject)
 {
-    return $InputObject.ToLower() | ConvertFrom-SnakeCase
+    return ConvertFrom-SnakeCase $InputObject.ToLower()
 }
 
 function ConvertTo-UpperSnakeCase([string] $InputObject)
 {
-    return $InputObject.ToUpper() | ConvertTo-SnakeCase
+    return (ConvertTo-SnakeCase $InputObject).ToUpper()
 }
