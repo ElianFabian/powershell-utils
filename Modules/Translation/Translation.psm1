@@ -22,6 +22,7 @@ class Language : System.Management.Automation.IValidateSetValuesGenerator
     }
 }
 
+https://wiki.freepascal.org/Using_Google_Translate
 
 
 <#
@@ -43,8 +44,10 @@ class Language : System.Management.Automation.IValidateSetValuesGenerator
 function Invoke-LanguageTranslation(
     [string] $InputObject,
     [ValidateSet([Language])]
+    [Alias('From')]
     [string] $SourceLanguage = 'auto',
     [ValidateSet([Language])]
+    [Alias('To')]
     [string] $TargetLanguage
 ) {
     $sourceLanguageCode, $targetLanguageCode = TryConvertLanguageToCode $SourceLanguage $TargetLanguage
