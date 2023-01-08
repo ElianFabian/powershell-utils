@@ -9,14 +9,11 @@ function Convert-ImageToAscii(
     [System.Drawing.Bitmap] $Image,
     [switch] $UseAlpha
 ) {
-    if ($Path)
+    $bitMap = if ($Path)
     {
-        $bitMap = [System.Drawing.Bitmap]::FromFile((Resolve-Path $Path))
+        [System.Drawing.Bitmap]::FromFile((Resolve-Path $Path))
     }
-    elseif ($Image)
-    {
-        $bitMap = $Image
-    }
+    else { $Image }
 
     $pixelDataFromTextSB = [System.Text.StringBuilder]::new()
 
@@ -68,14 +65,11 @@ function Convert-AsciiToImage(
     [string] $Text,
     [switch] $UseAlpha
 ) {
-    [byte[]] $pixelBytesFromText = $null
-
-    if ($Text)
+    [byte[]] $pixelBytesFromText = if ($Text)
     {
-        $encoding = [system.Text.Encoding]::ASCII
-        $pixelBytesFromText = $encoding.GetBytes($Text)
+        [System.Text.Encoding]::ASCII.GetBytes($Text)
     }
-    else { $pixelBytesFromText = [System.IO.File]::ReadAllBytes((Resolve-Path $Path)) }
+    else { [System.IO.File]::ReadAllBytes((Resolve-Path $Path)) }
 
     $charactersPerPixel = $UseAlpha ? 4 : 3
 
@@ -88,9 +82,11 @@ function Convert-AsciiToImage(
     {
         for ($y = 0; $y -lt $height; $y++)
         {
+            $yTimesWidth = $y * $width
+
             for ($x = 0; $x -lt $width; $x++)
             {
-                $pixelIndex = ($y * $width + $x) * $charactersPerPixel
+                $pixelIndex = ($yTimesWidth + $x) * $charactersPerPixel
 
                 $red   = $pixelBytesFromText[$pixelIndex]
                 $green = $pixelBytesFromText[$pixelIndex + 1]
@@ -107,9 +103,11 @@ function Convert-AsciiToImage(
     {
         for ($y = 0; $y -lt $height; $y++)
         {
+            $yTimesWidth = $y * $width
+
             for ($x = 0; $x -lt $width; $x++)
             {
-                $pixelIndex = ($y * $width + $x) * $charactersPerPixel
+                $pixelIndex = ($yTimesWidth + $x) * $charactersPerPixel
 
                 $red   = $pixelBytesFromText[$pixelIndex]
                 $green = $pixelBytesFromText[$pixelIndex + 1]
