@@ -10,7 +10,7 @@ function Get-DefaultBrowserProgId
 
 function Open-WebPage($Url)
 {
-    (New-Object -com Shell.Application).Open($Url)
+    Start-Process $Url
 }
 
 
