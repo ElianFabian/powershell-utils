@@ -74,8 +74,7 @@ function Convert-ItemWithRegex
 ) {
     $resultSB = [System.Text.StringBuilder]::new()
 
-    $currentIndex = 0
-    $separator    = ''
+    $separator = ''
 
     $allMatches = $InputObject | Select-String -Pattern $ItemPattern -AllMatches | Select-Object -ExpandProperty Matches
 
@@ -87,7 +86,6 @@ function Convert-ItemWithRegex
 
         $resultSB.Append("$separator$newItem") > $null
 
-        $currentIndex++
         $separator = $ItemSeparator
     }
 
