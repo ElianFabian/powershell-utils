@@ -7,22 +7,25 @@
     Inserts or updates a value. To update the value it needs the value's regex value's key to identify it.
 #>
 function InsertOrUpdate-ValueInString
-(
-    [string]      $ValueToInsertOrUpdate,
-    [string]      $ValuePattern,
-    [string]      $ValueKey,
-    [string]      $SourceString,
-    [Scriptblock] $InsertValue = {
-        param($sourceString, $valueToInsert)
+{
+    param
+    (
+        [string]      $ValueToInsertOrUpdate,
+        [string]      $ValuePattern,
+        [string]      $ValueKey,
+        [string]      $SourceString,
+        [Scriptblock] $InsertValue = {
+            param($sourceString, $valueToInsert)
 
-        return $sourceString + $valueToInsert
-    },
-    [scriptblock] $UpdateValue = {
-        param($updatedText)
+            return $sourceString + $valueToInsert
+        },
+        [scriptblock] $UpdateValue = {
+            param($updatedText)
 
-        return $updatedText
-    }
-) {
+            return $updatedText
+        }
+    )
+
     $textMatches = ($SourceString | Select-String -Pattern $ValuePattern -AllMatches).Matches
 
     if ($null -eq $textMatches) # Insert
@@ -42,15 +45,13 @@ function InsertOrUpdate-ValueInString
 
 <#
     .SYNOPSIS
-    Given a string gets every item using a pattern to convert it into another string with items.  
+    Given a string returns an array of every item using a pattern to convert it into another string with items.
     .PARAMETER InputObject
-    A string of items that matches a certain pattern.  
+    A string of items that matches a certain pattern.
     .PARAMETER ItemPattern
-    The pattern to match each item of the given InputObject.  
-    .PARAMETER ItemSeparator
-    It's the string that separates each item, by default it's a new line.  
-    .PARAMETER OnCreateItem
-    An script block which $args contains all the groups defined in $ItemPattern and returns an item as string.  
+    The pattern to match each item of the given InputObject. 
+    .PARAMETER OnGetItem
+    An script block which $args contains all the groups defined in $ItemPattern and returns an item as string.
     .EXAMPLE
     Convert-ItemWithRegex `
         -InputObject @"
@@ -58,39 +59,45 @@ function InsertOrUpdate-ValueInString
         <string name="age">25</string>
     "@ `
         -ItemPattern '<string name="(.+)">(.+)<\/string>' `
-        -OnCreateItem { $name, $content = $args  
+        -OnGetItem { $name, $content = $args  
             "$name = ""$content"""
         }
     output:
         name = "Alice"
-        age = 25
+        age = "25"
 #>
 function Convert-ItemWithRegex
-(
-    [string]      $InputObject,
-    [string]      $ItemPattern,
-    [string]      $ItemSeparator = "`n",
-    [scriptblock] $OnCreateItem
-) {
-    $resultSB = [System.Text.StringBuilder]::new()
-
-    $separator = ''
+{
+    [OutputType([object[]])]
+    param
+    (
+        [Parameter(Mandatory=$true)]
+        [string] $InputObject,
+        [Parameter(Mandatory=$true)]
+        [string] $ItemPattern,
+        [Parameter(Mandatory=$true)]
+        [scriptblock] $OnGetItem
+    )
 
     $allMatches = $InputObject | Select-String -Pattern $ItemPattern -AllMatches | Select-Object -ExpandProperty Matches
 
+    $arrayOfItems = New-Object object[] $allMatches.Count
+
+    $itemIndex = 0
     foreach ($match in $allMatches)
     {
-        $_first, $groups = $match.Groups | Select-Object -ExpandProperty Value
+        $_first, $groups = foreach ($group in $match.Groups) { $group.Value }
 
-        $newItem = $OnCreateItem.Invoke($groups)
+        $newItem = $OnGetItem.Invoke($groups)
 
-        $resultSB.Append("$separator$newItem") > $null
+        $arrayOfItems[$itemIndex] = $newItem
 
-        $separator = $ItemSeparator
+        $itemIndex++
     }
 
-    return $resultSB.ToString()
+    return $arrayOfItems
 }
+
 
 
 
