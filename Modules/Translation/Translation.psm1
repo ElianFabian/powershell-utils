@@ -22,7 +22,7 @@ class Language : System.Management.Automation.IValidateSetValuesGenerator
     }
 }
 
-https://wiki.freepascal.org/Using_Google_Translate
+# https://wiki.freepascal.org/Using_Google_Translate
 
 
 <#
