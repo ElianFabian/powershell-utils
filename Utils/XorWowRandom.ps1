@@ -7,7 +7,26 @@ class XorWowRandom {
     hidden [int] $v
     hidden [int] $addend
 
-    XorWowRandom([int] $seed1, [int] $seed2) {
+    hidden XorWowRandom([int] $seed1, [int] $seed2) {
+        $this.SetSeed($seed1, $seed2)
+    }
+
+    hidden XorWowRandom() { }
+
+    static [XorWowRandom] FromSeed([int] $seed) {
+        $random = [XorWowRandom]::new()
+        $random.SetSeed($seed)
+        return $random
+    }
+
+    static [XorWowRandom] FromSeed([long] $seed) {
+        $random = [XorWowRandom]::new()
+        $random.SetSeed($seed)
+        return $random
+    }
+
+
+    hidden [void] SetSeed([int] $seed1, [int] $seed2) {
         $this.x = $seed1
         $this.y = $seed2
         $this.z = 0
@@ -27,21 +46,19 @@ class XorWowRandom {
         }
     }
 
-    static [XorWowRandom] FromSeed([int] $seed) {
-        return [XorWowRandom]::new($seed, $seed -shr 31)
+    [void] SetSeed([int] $seed) {
+        $this.SetSeed($seed, $seed -shr 31)
     }
 
-    static [XorWowRandom] FromSeed([long] $seed) {
-        return [XorWowRandom]::new([int]::CreateTruncating($seed), [int]::CreateTruncating($seed -shr 31))
+    [void] SetSeed([long] $seed) {
+        $this.SetSeed([int]::CreateTruncating($seed), [int]::CreateTruncating($seed -shr 31))
     }
-
 
     [int] NextBits([int] $bitCount) {
         return [int]::CreateTruncating(
             [uint]::CreateTruncating($this.NextInt()) -shr (32 - $bitCount)
         ) -band (-$bitCount -shr 31)
     }
-
 
     [int] NextInt() {
         # Equivalent to the xorxow algorithm
@@ -62,7 +79,7 @@ class XorWowRandom {
     [int] NextInt([int] $until) {
         return $this.NextInt(0, $until)
     }
-    
+
     [int] NextInt([int] $from, [int] $until) {
         if ($until -le $from) {
             throw "Random range is empty: [$from, $until)."
@@ -110,7 +127,7 @@ class XorWowRandom {
         if ($until -le $from) {
             throw "Random range is empty: [$from, $until)."
         }
-    
+
         $n = $until - $from
         if ($n -gt 0) {
             $rnd = 0L
@@ -153,7 +170,7 @@ class XorWowRandom {
                 }
             }
         }
-    
+
         throw "This should never happen"
     }
 
@@ -205,9 +222,9 @@ class XorWowRandom {
         if ($fromIndex -gt $toIndex) {
             throw "fromIndex ($fromIndex) must be not greater than toIndex ($toIndex)."
         }
-    
+
         $steps = [math]::Floor(($toIndex - $fromIndex) / 4)
-    
+
         $position = $fromIndex
         for ($i = 0; $i -lt $steps; $i++) {
             $value = $this.NextInt()
@@ -223,7 +240,7 @@ class XorWowRandom {
             )
             $position += 4
         }
-    
+
         $remainder = $toIndex - $position
         $vr = $this.NextBits($remainder * 8)
         for ($i = 0; $i -lt $remainder; $i++) {
@@ -231,14 +248,14 @@ class XorWowRandom {
                 [uint]::CreateTruncating($vr) -shr ($i * 8)
             )
         }
-    
+
         return $array
     }
 
     [sbyte[]] NextBytes([sbyte[]] $array) {
         return $this.NextBytes($array, 0, $array.Length)
     }
-    
+
     [sbyte[]] NextBytes([int] $size) {
         $array = New-Object sbyte[]($size)
         return $this.NextBytes($array)
